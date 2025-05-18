@@ -13,6 +13,14 @@ namespace Lab_10
         private int _ticketLen;
         private LotteryParticipant _participant;
 
+        public LotteryParticipant Participant
+        {
+            get
+            {
+                return _participant;
+            }
+        }
+
         public string TicketID
         {
             get
