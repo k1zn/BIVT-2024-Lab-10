@@ -86,7 +86,10 @@ namespace Lab_10
             var rand = new Random();
 
             _isWinnerExist = true;
-            return _tickets[rand.Next(_tickets.Length)];
+            var winner = _tickets[rand.Next(_tickets.Length)];
+            _winnerTicket = winner;
+
+            return winner;
         }
     }
 }
