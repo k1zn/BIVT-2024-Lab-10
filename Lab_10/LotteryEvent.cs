@@ -63,6 +63,8 @@ namespace Lab_10
                 var surname = RandomCyrillicChars[rand.Next(RandomCyrillicChars.Length)];
                 var age = rand.Next(18, 46);
 
+                // из будущих проблем - тут никак не учитывается numberOfParticipants, так что если numberOfTickets > numberOfParticipants то людей окажется больше чем было задано
+
                 var person = new LotteryParticipant(name, surname, age);
                 var ticket = person.BuyTicket(this);
 
