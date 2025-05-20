@@ -1,0 +1,8 @@
+{
+  "NumberOfTickets": 12,
+  "NumberOfParticipants": 342,
+  "PrizeFund": 10000,
+  "EventName": "dsFD",
+  "Winner": "Даниэль Т.",
+  "Ticket_ID": "964"
+}

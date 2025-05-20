@@ -70,8 +70,7 @@ namespace Lab_10
                 var person = new LotteryParticipant(name, surname, age);
                 var ticket = person.BuyTicket(this);
 
-                Array.Resize(ref _tickets, _tickets.Length + 1);
-                _tickets[^1] = ticket;
+                _tickets[i] = ticket;
             }
         }
 
