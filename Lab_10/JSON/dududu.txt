@@ -1,0 +1,8 @@
+{
+  "NumberOfTickets": 50,
+  "NumberOfParticipants": 100,
+  "PrizeFund": 1000000,
+  "EventName": "dududu",
+  "Winner": "Вадим З.",
+  "Ticket_ID": "33"
+}

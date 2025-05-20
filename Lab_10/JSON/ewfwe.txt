@@ -1,8 +1,0 @@
-{
-  "NumberOfTickets": 12,
-  "NumberOfParticipants": 123,
-  "PrizeFund": 3423423,
-  "EventName": "ewfwe",
-  "Winner": "Камилла К.",
-  "Ticket_ID": "02"
-}

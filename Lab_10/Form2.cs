@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,11 +15,11 @@ namespace Lab_10
 {
     public partial class Form2 : Form
     {
+     
         public Form2()
         {
             InitializeComponent();
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(textBox1.Text))
@@ -51,14 +53,17 @@ namespace Lab_10
             string id = winnerTicket.TicketID;
             var participant = winnerTicket.Participant;
             string initials = participant.Initials;
-            MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}");
+            
             var jsonObj = JObject.FromObject(Lottery);
             jsonObj["Winner"] = initials;
             jsonObj["Ticket_ID"] = id;
             string path = @"C:\Users\user\Documents\GitHub\BIVT-2024-Lab-10\Lab_10\JSON";
-            string fullPath = Path.Combine(path, $"{lotteryName}.txt");
+            string fullPath = Path.Combine(path, $"{lotteryName}.txt"); 
             File.WriteAllText(fullPath, jsonObj.ToString());
-            
+            DataTransfer.LastFilePath = fullPath;
+
+            MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}");
+
         }
     }
 }

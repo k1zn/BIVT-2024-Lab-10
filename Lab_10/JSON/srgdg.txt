@@ -1,8 +1,0 @@
-{
-  "NumberOfTickets": 1223,
-  "NumberOfParticipants": 1223,
-  "PrizeFund": 12345,
-  "EventName": "srgdg",
-  "Winner": "Лада Ф.",
-  "Ticket_ID": "5967"
-}
