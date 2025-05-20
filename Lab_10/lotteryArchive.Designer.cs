@@ -65,6 +65,7 @@
             button3.TabIndex = 2;
             button3.Text = "Таблица участников";
             button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
             // 
             // lotteryArchive
             // 

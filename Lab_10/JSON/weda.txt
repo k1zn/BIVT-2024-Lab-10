@@ -1,0 +1,8 @@
+{
+  "NumberOfTickets": 123,
+  "NumberOfParticipants": 2132,
+  "PrizeFund": 4343,
+  "EventName": "weda",
+  "Winner": "Аяна Н.",
+  "Ticket_ID": "085"
+}

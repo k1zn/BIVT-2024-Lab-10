@@ -28,5 +28,11 @@ namespace Lab_10
             Form1 form1 = new Form1();
             form1.Show();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Template form3 = new Template();
+            form3.Show();
+        }
     }
 }

@@ -35,6 +35,8 @@
             label2 = new Label();
             label3 = new Label();
             button1 = new Button();
+            label4 = new Label();
+            textBox4 = new TextBox();
             SuspendLayout();
             // 
             // textBox1
@@ -87,19 +89,38 @@
             // 
             // button1
             // 
-            button1.Location = new Point(112, 270);
+            button1.Location = new Point(106, 335);
             button1.Name = "button1";
             button1.Size = new Size(195, 29);
             button1.TabIndex = 6;
             button1.Text = "Запустить лотерею";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(22, 260);
+            label4.Name = "label4";
+            label4.Size = new Size(181, 20);
+            label4.TabIndex = 7;
+            label4.Text = "Введите призовой фонд:";
+            // 
+            // textBox4
+            // 
+            textBox4.Location = new Point(22, 283);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(125, 27);
+            textBox4.TabIndex = 8;
             // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Info;
-            ClientSize = new Size(407, 311);
+            ClientSize = new Size(407, 387);
+            Controls.Add(textBox4);
+            Controls.Add(label4);
             Controls.Add(button1);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -122,5 +143,7 @@
         private Label label2;
         private Label label3;
         private Button button1;
+        private Label label4;
+        private TextBox textBox4;
     }
 }

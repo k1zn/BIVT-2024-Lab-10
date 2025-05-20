@@ -50,6 +50,8 @@ namespace Lab_10
             NumberOfTickets = numberOfTickets;
             NumberOfParticipants = numberOfParticipants;
             PrizeFund = prizeFund;
+
+            _tickets = new LotteryTicket[numberOfTickets];
         }
 
         public void FillRandom()
@@ -80,7 +82,12 @@ namespace Lab_10
             var rand = new Random();
 
             _isWinnerExist = true;
-            var winner = _tickets[rand.Next(_tickets.Length)];
+            var i = rand.Next(_tickets.Length);
+            var winner = _tickets[i];
+            if (winner == null)
+            {
+                throw new Exception($"error! {_tickets.Length} {i}");
+            }
             _winnerTicket = winner;
 
             return winner;

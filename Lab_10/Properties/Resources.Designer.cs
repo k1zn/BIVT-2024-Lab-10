@@ -59,5 +59,15 @@ namespace Lab_10.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tiny_Tickers_Lottery_1536x864_1_1024x576 {
+            get {
+                object obj = ResourceManager.GetObject("Tiny-Tickers-Lottery-1536x864-1-1024x576", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
