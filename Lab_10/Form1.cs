@@ -20,56 +20,86 @@ namespace Lab_10
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(DataTransfer.LastFilePath))
+            string directoryPath = @"C:\Users\user\Documents\GitHub\BIVT-2024-Lab-10\Lab_10\JSON";
+            
+            string[] files = Directory.GetFiles(directoryPath);
+            if (files.Length == 0 )
             {
-                MessageBox.Show("Информация не найдена!!!");
+                MessageBox.Show("Информация не найдена");
                 return;
             }
-            var jsonObj = JObject.Parse(File.ReadAllText(DataTransfer.LastFilePath));
-            tableLayoutPanel1.RowCount++;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            var label1 = new Label
+            ClearTableLayoutPanel(tableLayoutPanel1);
+            foreach (string file in files)
             {
-                Text = jsonObj["EventName"].ToString(),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
 
-            var label2 = new Label
-            {
-                Text = jsonObj["NumberOfParticipants"].ToString(),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
+                if (string.IsNullOrEmpty(file))
+                {
+                    MessageBox.Show("Информация не найдена!!!");
+                    return;
+                }
+                var jsonObj = JObject.Parse(File.ReadAllText(file));
+                tableLayoutPanel1.RowCount++;
+                tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                var label1 = new Label
+                {
+                    Text = jsonObj["EventName"].ToString(),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
 
-            var label3 = new Label
-            {
-                Text = jsonObj["NumberOfTickets"].ToString(),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
+                var label2 = new Label
+                {
+                    Text = jsonObj["NumberOfParticipants"].ToString(),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
 
-            var label4 = new Label
-            {
-                Text = jsonObj["PrizeFund"].ToString(),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
+                var label3 = new Label
+                {
+                    Text = jsonObj["NumberOfTickets"].ToString(),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
 
-            var label5 = new Label
-            {
-                Text = jsonObj["Winner"].ToString(),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
+                var label4 = new Label
+                {
+                    Text = jsonObj["PrizeFund"].ToString(),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
 
-            var label6 = new Label
-            {
-                Text = jsonObj["Ticket_ID"].ToString(),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            tableLayoutPanel1.Controls.Add(label1);
-            tableLayoutPanel1.Controls.Add(label2);
-            tableLayoutPanel1.Controls.Add(label3);
-            tableLayoutPanel1.Controls.Add(label4);
-            tableLayoutPanel1.Controls.Add(label5);
-            tableLayoutPanel1.Controls.Add(label6);
-            DataTransfer.Clear();
+                var label5 = new Label
+                {
+                    Text = jsonObj["Winner"].ToString(),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                var label6 = new Label
+                {
+                    Text = jsonObj["Ticket_ID"].ToString(),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                var label7 = new Label
+                {
+                    Text = jsonObj["timestamp"].ToString(),
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+                tableLayoutPanel1.Controls.Add(label1);
+                tableLayoutPanel1.Controls.Add(label2);
+                tableLayoutPanel1.Controls.Add(label3);
+                tableLayoutPanel1.Controls.Add(label4);
+                tableLayoutPanel1.Controls.Add(label5);
+                tableLayoutPanel1.Controls.Add(label6);
+                tableLayoutPanel1.Controls.Add(label7);
+            }
+
+
+            //DataTransfer.Clear();
         }
+        private void ClearTableLayoutPanel(TableLayoutPanel tableLayoutPanel)
+        {
+            tableLayoutPanel.Controls.Clear();
+
+            tableLayoutPanel.RowStyles.Clear();
+            tableLayoutPanel.RowCount = 0;
+        }
+
     }
 }

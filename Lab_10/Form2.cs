@@ -55,10 +55,17 @@ namespace Lab_10
             string initials = participant.Initials;
             
             var jsonObj = JObject.FromObject(Lottery);
+            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTimestampSeconds);
+            DateTime dateTime = dateTimeOffset.DateTime;
+            TimeZoneInfo russiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
+            DateTime russiaDateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, russiaTimeZone);
+            MessageBox.Show(russiaDateTime.ToString());
             jsonObj["Winner"] = initials;
             jsonObj["Ticket_ID"] = id;
+            jsonObj["timestamp"] = russiaDateTime;
             string path = @"C:\Users\user\Documents\GitHub\BIVT-2024-Lab-10\Lab_10\JSON";
-            string fullPath = Path.Combine(path, $"{lotteryName}.txt"); 
+            string fullPath = Path.Combine(path, $"{lotteryName}_{unixTimestampSeconds}.txt"); 
             File.WriteAllText(fullPath, jsonObj.ToString());
             DataTransfer.LastFilePath = fullPath;
 
