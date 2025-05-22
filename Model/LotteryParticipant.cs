@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_10
+namespace Model
 {
     public class LotteryParticipant : Person
     {
@@ -19,7 +20,7 @@ namespace Lab_10
                 if (_tickets == null)
                     return new LotteryTicket[0];
 
-                return (LotteryTicket[])_tickets.Clone(); 
+                return (LotteryTicket[])_tickets.Clone();
             }
         }
 

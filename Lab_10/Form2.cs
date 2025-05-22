@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Model;
 namespace Lab_10
 {
     public partial class Form2 : Form
@@ -63,11 +64,10 @@ namespace Lab_10
             MessageBox.Show(russiaDateTime.ToString());
             jsonObj["Winner"] = initials;
             jsonObj["Ticket_ID"] = id;
-            jsonObj["timestamp"] = russiaDateTime;
+            jsonObj["timestamp"] = russiaDateTime.ToString();
             string path = @"C:\Users\user\Documents\GitHub\BIVT-2024-Lab-10\Lab_10\JSON";
             string fullPath = Path.Combine(path, $"{lotteryName}_{unixTimestampSeconds}.txt"); 
             File.WriteAllText(fullPath, jsonObj.ToString());
-            DataTransfer.LastFilePath = fullPath;
 
             MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}");
 

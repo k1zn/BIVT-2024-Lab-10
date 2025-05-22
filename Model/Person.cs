@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab_10
+namespace Model
 {
     public class Person : IPerson
     {
@@ -13,7 +13,8 @@ namespace Lab_10
             get; private set;
         }
 
-        public int UserID {
+        public int UserID
+        {
             get; private set;
         }
 
