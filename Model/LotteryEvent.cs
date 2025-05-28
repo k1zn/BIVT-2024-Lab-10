@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class LotteryEvent
+    public partial class LotteryEvent
     {
         public int NumberOfTickets
         {
@@ -50,7 +50,7 @@ namespace Model
             NumberOfTickets = numberOfTickets;
             NumberOfParticipants = numberOfParticipants;
             PrizeFund = prizeFund;
-
+            
             _tickets = new LotteryTicket[numberOfTickets];
         }
 
@@ -64,13 +64,17 @@ namespace Model
                 var name = RandomNames[rand.Next(RandomNames.Length)];
                 var surname = RandomCyrillicChars[rand.Next(RandomCyrillicChars.Length)];
                 var age = rand.Next(18, 46);
-
+                var balance = rand.Next(100, 1000);
+                var greed = rand.Next(0, 100);
                 // из будущих проблем - тут никак не учитывается numberOfParticipants, так что если numberOfTickets > numberOfParticipants то людей окажется больше чем было задано
 
-                var person = new LotteryParticipant(name, surname, age);
+                var person = new LotteryParticipant(name, surname, age, balance, greed);
                 var ticket = person.BuyTicket(this);
-
-                _tickets[i] = ticket;
+                if (ticket != null)
+                {
+                    _tickets[i] = ticket;
+                }
+                
             }
         }
 
@@ -91,5 +95,6 @@ namespace Model
 
             return winner;
         }
+
     }
 }

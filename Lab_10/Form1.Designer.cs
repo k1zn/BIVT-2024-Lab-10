@@ -37,13 +37,14 @@
             label3 = new Label();
             button1 = new Button();
             tableLayoutPanel2 = new TableLayoutPanel();
-            label7 = new Label();
             label8 = new Label();
+            label7 = new Label();
             tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
+            tableLayoutPanel1.AutoScroll = true;
             tableLayoutPanel1.BackColor = SystemColors.Control;
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             tableLayoutPanel1.ColumnCount = 7;
@@ -160,6 +161,13 @@
             label8.Text = "Время проведения";
             label8.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // label7
+            // 
+            label7.Location = new Point(0, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(100, 23);
+            label7.TabIndex = 3;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -169,11 +177,11 @@
             Controls.Add(button1);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(label7);
+            MaximizeBox = false;
             Name = "Form1";
             Text = "Form1";
             tableLayoutPanel2.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion

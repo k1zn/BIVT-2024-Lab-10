@@ -20,8 +20,13 @@ namespace Lab_10
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            string directoryPath = @"C:\Users\user\Documents\GitHub\BIVT-2024-Lab-10\Lab_10\JSON";
-            
+            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "JSON");
+
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
             string[] files = Directory.GetFiles(directoryPath);
             if (files.Length == 0 )
             {
@@ -29,6 +34,9 @@ namespace Lab_10
                 return;
             }
             ClearTableLayoutPanel(tableLayoutPanel1);
+
+            tableLayoutPanel1.SuspendLayout();
+
             foreach (string file in files)
             {
 
@@ -90,8 +98,10 @@ namespace Lab_10
                 tableLayoutPanel1.Controls.Add(label7);
             }
 
+            tableLayoutPanel1.ResumeLayout();
 
-            //DataTransfer.Clear();
+
+           
         }
         private void ClearTableLayoutPanel(TableLayoutPanel tableLayoutPanel)
         {

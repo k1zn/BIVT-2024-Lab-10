@@ -54,23 +54,33 @@ namespace Lab_10
             string id = winnerTicket.TicketID;
             var participant = winnerTicket.Participant;
             string initials = participant.Initials;
-            
-            var jsonObj = JObject.FromObject(Lottery);
-            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTimestampSeconds);
-            DateTime dateTime = dateTimeOffset.DateTime;
-            TimeZoneInfo russiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
-            DateTime russiaDateTime = TimeZoneInfo.ConvertTimeFromUtc(dateTime, russiaTimeZone);
-            MessageBox.Show(russiaDateTime.ToString());
-            jsonObj["Winner"] = initials;
-            jsonObj["Ticket_ID"] = id;
-            jsonObj["timestamp"] = russiaDateTime.ToString();
-            string path = @"C:\Users\user\Documents\GitHub\BIVT-2024-Lab-10\Lab_10\JSON";
-            string fullPath = Path.Combine(path, $"{lotteryName}_{unixTimestampSeconds}.txt"); 
-            File.WriteAllText(fullPath, jsonObj.ToString());
+            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();  
+            DateTime russiaDateTime = getRussiaDateTime(unixTimestampSeconds);
+            serialize(Lottery, initials, id, unixTimestampSeconds, lotteryName);
 
             MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}");
 
+        }
+        private DateTime getRussiaDateTime(long unixTimestampSeconds)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTimestampSeconds);
+            DateTime dateTime = dateTimeOffset.DateTime;
+            TimeZoneInfo russiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
+            return TimeZoneInfo.ConvertTimeFromUtc(dateTime, russiaTimeZone);
+        }
+        private void serialize<T>(T obj, string initials, string id, long unixTimestampSeconds, string lotteryName)
+        {
+            var jsonObj = JObject.FromObject(obj);
+            jsonObj["Winner"] = initials;
+            jsonObj["Ticket_ID"] = id;
+            jsonObj["timestamp"] = getRussiaDateTime(unixTimestampSeconds);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "JSON");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            string fullPath = Path.Combine(path, $"{lotteryName}_{unixTimestampSeconds}.json");
+            File.WriteAllText(fullPath, jsonObj.ToString());
         }
     }
 }

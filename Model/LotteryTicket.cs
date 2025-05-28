@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class LotteryTicket
+    public partial class LotteryTicket
     {
         private static int _ticketCounter = 0;
         private int _ticketId;
@@ -34,6 +34,7 @@ namespace Model
         public LotteryTicket(LotteryEvent lottery, LotteryParticipant participant)
         {
             //
+
             _ticketId = _ticketCounter++;
             _ticketLen = lottery.NumberOfTickets.ToString().Length;
             _participant = participant;

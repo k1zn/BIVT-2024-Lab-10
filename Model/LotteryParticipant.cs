@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class LotteryParticipant : Person
+    public partial class LotteryParticipant : Person
     {
-        public LotteryParticipant(string name, string surname, int age) : base(name, surname, age) { }
+        public LotteryParticipant(string name, string surname, int age, int initialBalance, int greed=0) : base(name, surname, age)
+        {
+            Balance = initialBalance;
+            Greed = greed;
+        }
 
         private LotteryTicket[] _tickets;
 
@@ -27,10 +31,16 @@ namespace Model
         public LotteryTicket BuyTicket(LotteryEvent lottery)
         {
             var ticket = new LotteryTicket(lottery, this);
-            Array.Resize(ref _tickets, Tickets.Length + 1);
-            Tickets[^1] = ticket;
+            if (ticket.Price <= Balance)
+            {
+                Balance-=ticket.Price;
+                Array.Resize(ref _tickets, Tickets.Length + 1);
+                Tickets[^1] = ticket;
+                return ticket;
+            }
+            return null;
 
-            return ticket;
+            
         }
     }
 }
