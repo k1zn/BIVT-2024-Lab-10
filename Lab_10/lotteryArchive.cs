@@ -17,22 +17,33 @@ namespace Lab_10
             InitializeComponent();
         }
 
+        private void OpenAnyForm<T>() where T : Form, new()
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form is T)
+                {
+                    form.Focus();
+                    return;
+                }
+            }
+            T newForm = new T();
+            newForm.Show();
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            Form2 form2 = new Form2();
-            form2.Show();
+            OpenAnyForm<Form2>();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Form1 form1 = new Form1();
-            form1.Show();
+            OpenAnyForm<Form1>();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Template form3 = new Template();
-            form3.Show();
+            OpenAnyForm<Template>();
         }
     }
 }
