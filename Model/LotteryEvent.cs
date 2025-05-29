@@ -106,6 +106,7 @@ namespace Model
             _tickets = _tickets.Where(t => t != null).ToArray();
             var i = rand.Next(_tickets.Length);
             var winner = _tickets[i];
+
             if (winner == null)
             {
                 throw new Exception($"error! {_tickets.Length} {i}");
