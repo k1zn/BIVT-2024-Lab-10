@@ -30,9 +30,12 @@ namespace Model
 
         private bool _isWinnerExist;
         private LotteryTicket _winnerTicket;
+
         private LotteryParticipant[] _lotteryParticipants;
 
         private LotteryTicket[] _tickets;
+
+        private Dictionary<LotteryParticipant, string> _participantFileMap = new Dictionary<LotteryParticipant, string>();
 
         public LotteryEvent(string eventName, int numberOfTickets, int numberOfParticipants, int prizeFund, decimal ticketprice)
         {
@@ -66,26 +69,28 @@ namespace Model
             foreach (var file in files)
             {
                 var jsonObj = JObject.Parse(File.ReadAllText(file));
-                var participant = deserialize(jsonObj);
+                var participant = deserialize(jsonObj, file);
                 if (participant != null) 
                     _lotteryParticipants[index++] = participant;
-                
-                
             }
             
             _lotteryParticipants = _lotteryParticipants.Where(r => r != null)
                 .OrderByDescending(participant => participant.Greed).ToArray();
             index = 0;
-            
             foreach (var participant in _lotteryParticipants)
             {
                 var ticket = participant.BuyTicket(this);
+                string pathToParticipant = _participantFileMap[participant];
+                if (pathToParticipant != null && ticket!=null)
+                {
+                    File.WriteAllText(pathToParticipant, JObject.FromObject(participant).ToString());
+                }
                 if (ticket != null) _tickets[index++] = ticket;
             }
             
             
         }
-        private LotteryParticipant deserialize(JObject jsonObj)
+        private LotteryParticipant deserialize(JObject jsonObj, string filePath)
         {
             if (jsonObj == null) return null;
             var initials = jsonObj["Initials"].ToString();
@@ -94,6 +99,8 @@ namespace Model
             var balance = Convert.ToInt32(jsonObj["Balance"]);
             var greed = Convert.ToInt32(jsonObj["Greed"]);
             var participant = new LotteryParticipant(initialsSplit[0], initialsSplit[0][0].ToString(), age, balance, greed);
+
+            _participantFileMap[participant] = filePath;
             return participant;
         }
         public LotteryTicket GetWinner()

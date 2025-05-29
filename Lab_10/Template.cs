@@ -52,7 +52,6 @@ namespace Lab_10
                 var jsonObj = JObject.Parse(File.ReadAllText(file));
                 var initials = jsonObj["Initials"].ToString().Split(" ");
                 dataGridView1.Rows.Add(initials[0], initials[1].Trim(), jsonObj["Age"], jsonObj["Balance"], jsonObj["Greed"]);
-                File.Delete(file); //есть проблема, если при повторном открытии формы не нажать кнопку сохранить список, участники удалятся
             }
         }
 
@@ -90,7 +89,15 @@ namespace Lab_10
         private void button1_Click(object sender, EventArgs e)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
-            if (!Directory.Exists(path))
+            if (Directory.Exists(path))
+            {
+                var files = Directory.GetFiles(path);
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+            }
+            else
             {
                 Directory.CreateDirectory(path);
             }
@@ -106,9 +113,14 @@ namespace Lab_10
                     return;
                 }
 
-                if (!decimal.TryParse(row.Cells["Balance"].Value?.ToString(), out decimal balance) || balance < 0)
+                if (!decimal.TryParse(row.Cells["Balance"].Value?.ToString(), out decimal balance))
                 {
                     MessageBox.Show($"Ошибка в строке {rowIndex}: Баланс должен быть числом!");
+                    return;
+                }
+                else if(balance < 0)
+                {
+                    MessageBox.Show($"Ошибка в строке {rowIndex}: Баланс должен быть положительным!");
                     return;
                 }
 
