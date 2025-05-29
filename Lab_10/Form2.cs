@@ -22,6 +22,12 @@ namespace Lab_10
             InitializeComponent();
             //надо еще попробовать потестить, не все перепробовал ещё варианты
         }
+
+        private void ShowError(string text)
+        {
+            MessageBox.Show(text, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
@@ -32,41 +38,42 @@ namespace Lab_10
             var files = Directory.GetFiles(path);
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
-                MessageBox.Show("Введите название Лотереи!!!");
+                ShowError("Укажите название лотереи");
                 return;
             }
             if (!int.TryParse(textBox2.Text, out int countParticipants) || countParticipants <= 0)
             {
-                MessageBox.Show("Некорректное количество участников!");
+                ShowError("Указано некорректное число участников");
                 return;
             }
             
 
             if (!int.TryParse(textBox3.Text, out int countTicket) || countTicket <= 0)
             {
-                MessageBox.Show("Некорректное количество билетов!");
+                ShowError("Указано некорректное количество билетов");
                 return;
             }
             if (!int.TryParse(textBox5.Text, out int TicketPrice) || TicketPrice < 0)
             {
-                MessageBox.Show("Некорректное цена билета!");
+                ShowError("Указана некорректная цена билета");
                 return;
             }
             if (!int.TryParse(textBox4.Text, out int prizeFund) || prizeFund <= 0)
             {
-                MessageBox.Show("Некорректный призовой фонд!");
-                return;
-            }
-            if (files.Length < countParticipants)
-            {
-                MessageBox.Show("Добавьте больше участников в таблицу!");
+                ShowError("Указан некорректный призовой фонд");
                 return;
             }
             if (countParticipants > countTicket)
             {
-                MessageBox.Show("Недостаточно билетов!");
+                ShowError("Недостаточно билетов для проведения лотереи (количество участников превышает количество билетов)");
                 return;
             }
+            if (files.Length < countParticipants)
+            {
+                ShowError("Недостаточно участников в таблице участников");
+                return;
+            }
+
 
 
             string lotteryName = textBox1.Text;

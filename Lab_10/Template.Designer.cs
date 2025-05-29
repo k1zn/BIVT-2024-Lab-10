@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Template));
             dataGridView1 = new DataGridView();
             button1 = new Button();
             button2 = new Button();
@@ -59,7 +60,7 @@
             button2.Name = "button2";
             button2.Size = new Size(240, 54);
             button2.TabIndex = 2;
-            button2.Text = "заполнить случайными участниками";
+            button2.Text = "Заполнить случайными участниками";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
@@ -71,9 +72,10 @@
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(dataGridView1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "Template";
-            Text = "Template";
+            Text = "Таблица участников";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }

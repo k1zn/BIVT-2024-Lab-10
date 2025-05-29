@@ -63,9 +63,9 @@ namespace Lab_10.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Tiny_Tickers_Lottery_1536x864_1_1024x576 {
+        internal static System.Drawing.Bitmap _26da1392_5950_4bb9_a844_7fa6c91ae02e1 {
             get {
-                object obj = ResourceManager.GetObject("Tiny-Tickers-Lottery-1536x864-1-1024x576", resourceCulture);
+                object obj = ResourceManager.GetObject("26da1392-5950-4bb9-a844-7fa6c91ae02e1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

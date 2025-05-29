@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             tableLayoutPanel1 = new TableLayoutPanel();
             label4 = new Label();
             label5 = new Label();
@@ -119,9 +120,9 @@
             // 
             // button1
             // 
-            button1.Location = new Point(510, 570);
+            button1.Location = new Point(560, 592);
             button1.Name = "button1";
-            button1.Size = new Size(200, 38);
+            button1.Size = new Size(174, 38);
             button1.TabIndex = 1;
             button1.Text = "Обновить";
             button1.UseVisualStyleBackColor = true;
@@ -177,9 +178,10 @@
             Controls.Add(button1);
             Controls.Add(tableLayoutPanel1);
             Controls.Add(label7);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "Form1";
-            Text = "Form1";
+            Text = "Статистика проведения лотерей";
             tableLayoutPanel2.ResumeLayout(false);
             ResumeLayout(false);
         }
