@@ -38,7 +38,6 @@ namespace Lab_10
             var files = Directory.GetFiles(path);
             deserialize(files);
 
-
         }
         private void deserialize(string[] files)
         {
@@ -95,25 +94,48 @@ namespace Lab_10
             {
                 Directory.CreateDirectory(path);
             }
+            int rowIndex = 1;
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (row.IsNewRow) continue;
+                
+                if (!int.TryParse(row.Cells["Age"].Value?.ToString(), out int age))
+                {
+                    MessageBox.Show($"Ошибка в строке {rowIndex}: Возраст должен быть числом!");
+                    return;
+                }
 
+                if (!decimal.TryParse(row.Cells["Balance"].Value?.ToString(), out decimal balance) || balance < 0)
+                {
+                    MessageBox.Show($"Ошибка в строке {rowIndex}: Баланс должен быть числом!");
+                    return;
+                }
+
+                if (!int.TryParse(row.Cells["Greed"].Value?.ToString(), out int greed))
+                {
+                    MessageBox.Show($"Ошибка в строке {rowIndex}: Жадность должна быть числом!");
+                    return;
+                }
+                else if(greed > 100 || greed < 0)
+                {
+                    MessageBox.Show($"Ошибка в строке {rowIndex}: Значение жадности должно находиться в диапазоне от 0 до 100");
+                    return;
+                }
                 var name = row.Cells["Name"].Value.ToString();
                 var surname = row.Cells["Surname"].Value.ToString();
-                var age = Convert.ToInt32(row.Cells["Age"].Value);
-                var balance = Convert.ToInt32(row.Cells["Balance"].Value);
-                var greed = Convert.ToInt32(row.Cells["Greed"].Value);
                 var participant = new LotteryParticipant(name, surname, age, balance, greed);
                 var jsonObj = JObject.FromObject(participant);
                 string fullpath = Path.Combine(path, $"Participant_{unixTimestampSeconds++}.json");
                 File.WriteAllText(fullpath, jsonObj.ToString());
+                rowIndex++;
             }
             MessageBox.Show("Список сохранен");
             this.Close();
 
         }
+
+        
     }
 
 

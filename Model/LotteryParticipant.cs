@@ -9,7 +9,7 @@ namespace Model
 {
     public partial class LotteryParticipant : Person
     {
-        public LotteryParticipant(string name, string surname, int age, int initialBalance, int greed=0) : base(name, surname, age)
+        public LotteryParticipant(string name, string surname, int age, decimal initialBalance, int greed=0) : base(name, surname, age)
         {
             Balance = initialBalance;
             Greed = greed;
