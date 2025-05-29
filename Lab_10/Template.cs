@@ -106,7 +106,7 @@ namespace Lab_10
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (row.IsNewRow) continue;
-                
+
                 if (!int.TryParse(row.Cells["Age"].Value?.ToString(), out int age))
                 {
                     MessageBox.Show($"Ошибка в строке {rowIndex}: Возраст должен быть числом!");
@@ -118,7 +118,7 @@ namespace Lab_10
                     MessageBox.Show($"Ошибка в строке {rowIndex}: Баланс должен быть числом!");
                     return;
                 }
-                else if(balance < 0)
+                else if (balance < 0)
                 {
                     MessageBox.Show($"Ошибка в строке {rowIndex}: Баланс должен быть положительным!");
                     return;
@@ -129,7 +129,7 @@ namespace Lab_10
                     MessageBox.Show($"Ошибка в строке {rowIndex}: Жадность должна быть числом!");
                     return;
                 }
-                else if(greed > 100 || greed < 0)
+                else if (greed > 100 || greed < 0)
                 {
                     MessageBox.Show($"Ошибка в строке {rowIndex}: Значение жадности должно находиться в диапазоне от 0 до 100");
                     return;
@@ -147,7 +147,10 @@ namespace Lab_10
 
         }
 
-        
+        private void button3_Click(object sender, EventArgs e)
+        {
+            dataGridView1.Rows.Clear();
+        }
     }
 
 

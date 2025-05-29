@@ -117,6 +117,12 @@ namespace Model
             }
             var i = rand.Next(_tickets.Length);
             var winner = _tickets[i];
+            var winnerParticipant = winner.Participant;
+            var newBalance = winnerParticipant.Balance+PrizeFund;
+            string pathToParticipant = _participantFileMap[winnerParticipant];
+            var jsonObj = JObject.FromObject(winnerParticipant);
+            jsonObj["Balance"] = newBalance;
+            File.WriteAllText(pathToParticipant,jsonObj.ToString());
 
             if (winner == null)
             {

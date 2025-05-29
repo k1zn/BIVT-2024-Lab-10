@@ -32,6 +32,7 @@
             dataGridView1 = new DataGridView();
             button1 = new Button();
             button2 = new Button();
+            button3 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -43,11 +44,10 @@
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.Size = new Size(684, 549);
             dataGridView1.TabIndex = 0;
-            dataGridView1.ReadOnly = false;
             // 
             // button1
             // 
-            button1.Location = new Point(410, 568);
+            button1.Location = new Point(473, 568);
             button1.Name = "button1";
             button1.Size = new Size(240, 54);
             button1.TabIndex = 1;
@@ -57,7 +57,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(73, 568);
+            button2.Location = new Point(12, 568);
             button2.Name = "button2";
             button2.Size = new Size(240, 54);
             button2.TabIndex = 2;
@@ -65,11 +65,22 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // button3
+            // 
+            button3.Location = new Point(287, 568);
+            button3.Name = "button3";
+            button3.Size = new Size(150, 54);
+            button3.TabIndex = 3;
+            button3.Text = "Очистить таблицу";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
             // Template
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(725, 645);
+            Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(dataGridView1);
@@ -86,5 +97,6 @@
         private DataGridView dataGridView1;
         private Button button1;
         private Button button2;
+        private Button button3;
     }
 }
