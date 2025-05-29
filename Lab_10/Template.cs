@@ -53,7 +53,7 @@ namespace Lab_10
                 var jsonObj = JObject.Parse(File.ReadAllText(file));
                 var initials = jsonObj["Initials"].ToString().Split(" ");
                 dataGridView1.Rows.Add(initials[0], initials[1].Trim(), jsonObj["Age"], jsonObj["Balance"], jsonObj["Greed"]);
-                File.Delete(file);
+                File.Delete(file); //есть проблема, если при повторном открытии формы не нажать кнопку сохранить список, участники удалятся
             }
         }
 

@@ -38,7 +38,7 @@ namespace Model
                 Tickets[^1] = ticket;
                 return ticket;
             }
-            return null;
+            else return null;
 
             
         }

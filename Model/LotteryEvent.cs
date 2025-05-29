@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Newtonsoft.Json.Linq;
 namespace Model
 {
     public partial class LotteryEvent
@@ -30,18 +30,11 @@ namespace Model
 
         private bool _isWinnerExist;
         private LotteryTicket _winnerTicket;
-
-        private string[] RandomNames = new string[] { "Максим", "Роберт", "Николай", "Михаил", "Эмин", "Алексей", "Артём", "Тимур", "Роман", "Сергей", "Леонид", "Иван", "Арсений", "Дмитрий", "Данил", "Глеб", "Фёдор", "Егор", "Демид", "Марк", "Александр", "Владимир", "Даниил", "Никита", "Константин", "Руслан", "Лев", "Григорий", "Пётр", "Ярослав", "Дамир", "Илья", "Георгий", "Захар", "Владислав", "Юрий", "Лука", "Денис", "Богдан", "Гордей", "Кирилл", "Степан", "Святослав", "Вадим", "Матвей", "Виктор", "Камиль", "Василий", "Павел", "Даниэль", "Андрей", "Артур", "Семён", "Платон", "Артемий", "Виталий", "Елисей", "Антон", "Тимофей", "Филипп", "Рустам", "Альберт", "Тихон", "Данила", "Родион", "Али", "Мирослав", "Евгений", "Давид", "Савелий", "Игорь", "Назар", "Валерий", "Олег", "Всеволод", "Арсен", "Макар", "Савва", "Адам", "Карим", "Вячеслав", "Станислав", "Эрик", "Мирон", "Герман", "Ян", "Марсель", "Анатолий", "Борис", "Ибрагим", "Леон", "Ростислав", "Серафим", "Демьян", "Яков", "Марат", "Аркадий", "Эмир", "Тигран", "Рафаэль", "Кира", "Анна", "Злата", "Евгения", "Софья", "Дарья", "Дарина", "Вероника", "Мария", "Аделина", "Анастасия", "Алиса", "Вера", "Виктория", "Сафия", "Варвара", "Полина", "Ева", "Арина", "Валерия", "Ульяна", "Малика", "Ариана", "Мирослава", "Есения", "Адель", "Василиса", "Элина", "София", "Кристина", "Александра", "Таисия", "Амалия", "Ирина", "Елизавета", "Аврора", "Мила", "Эмилия", "Агата", "Стефания", "Ангелина", "Екатерина", "Амина", "Милана", "Ксения", "Яна", "Лилия", "Елена", "Аяна", "Амелия", "Ника", "Маргарита", "Майя", "Алина", "Мира", "Алёна", "Марина", "Пелагея", "Юлия", "Камилла", "Ольга", "Алия", "Камила", "Марьям", "Любовь", "Татьяна", "Валентина", "Николь", "Светлана", "Ясмина", "Владислава", "Сабина", "Марьяна", "Антонина", "Лада", "Василина", "Лия", "Агния", "Мелания", "Айлин", "Мия", "Диана", "Ярослава", "Надежда", "Оливия", "Амира", "Наталья", "Фатима", "Алисия", "Эвелина", "Олеся", "Аиша", "Лидия", "Марианна", "Теона", "Альфия", "Медина", "Асия", "Лиана", "Зоя" };
-
-        string[] RandomCyrillicChars = new string[] {
-            "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й",
-            "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф",
-            "Х", "Ц", "Ч", "Ш", "Щ", "Э", "Ю", "Я"
-        };
+        private LotteryParticipant[] _lotteryParticipants;
 
         private LotteryTicket[] _tickets;
 
-        public LotteryEvent(string eventName, int numberOfTickets, int numberOfParticipants, int prizeFund)
+        public LotteryEvent(string eventName, int numberOfTickets, int numberOfParticipants, int prizeFund, decimal ticketprice)
         {
             if (numberOfTickets <= 0)
                 throw new ArgumentException("Number of tickets must be > 0");
@@ -50,34 +43,59 @@ namespace Model
             NumberOfTickets = numberOfTickets;
             NumberOfParticipants = numberOfParticipants;
             PrizeFund = prizeFund;
-            
+            TicketPrice = ticketprice;
             _tickets = new LotteryTicket[numberOfTickets];
+            _lotteryParticipants = new LotteryParticipant[numberOfParticipants];
         }
 
         public void FillRandom()
         {
-            Random rand = new Random();
-
-            for (int i = 0; i < NumberOfTickets; i++)
+            var rand = new Random();
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
+            if (!Directory.Exists(path))
             {
-
-                var name = RandomNames[rand.Next(RandomNames.Length)];
-                var surname = RandomCyrillicChars[rand.Next(RandomCyrillicChars.Length)];
-                var age = rand.Next(18, 46);
-                var balance = rand.Next(100, 1000);
-                var greed = rand.Next(0, 100);
-                // из будущих проблем - тут никак не учитывается numberOfParticipants, так что если numberOfTickets > numberOfParticipants то людей окажется больше чем было задано
-
-                var person = new LotteryParticipant(name, surname, age, balance, greed);
-                var ticket = person.BuyTicket(this);
-                if (ticket != null)
-                {
-                    _tickets[i] = ticket;
-                }
+                Directory.CreateDirectory(path);
+            }
+            var files = Directory.GetFiles(path);
+            if (files.Length == 0) return;
+            if (files.Length > NumberOfTickets)
+            {
+                files = files.OrderBy(f => rand.Next()).Take(NumberOfTickets).ToArray();
+            }
+            int index = 0;
+            foreach (var file in files)
+            {
+                var jsonObj = JObject.Parse(File.ReadAllText(file));
+                var participant = deserialize(jsonObj);
+                if (participant != null) 
+                    _lotteryParticipants[index++] = participant;
+                
                 
             }
+            
+            _lotteryParticipants = _lotteryParticipants.Where(r => r != null)
+                .OrderByDescending(participant => participant.Greed).ToArray();
+            index = 0;
+            
+            foreach (var participant in _lotteryParticipants)
+            {
+                var ticket = participant.BuyTicket(this);
+                if (ticket != null) _tickets[index++] = ticket;
+            }
+            
+            
         }
-
+        private LotteryParticipant deserialize(JObject jsonObj)
+        {
+            if (jsonObj == null) return null;
+            var initials = jsonObj["Initials"].ToString();
+            var initialsSplit = initials.Split(" ");
+            var age = Convert.ToInt32(jsonObj["Age"]);
+            var balance = Convert.ToInt32(jsonObj["Balance"]);
+            var greed = Convert.ToInt32(jsonObj["Greed"]);
+            var participant = new LotteryParticipant(initialsSplit[0], initialsSplit[0][0].ToString(), age, balance, greed);
+            return participant;
+        }
         public LotteryTicket GetWinner()
         {
             if (_isWinnerExist) return _winnerTicket;
@@ -85,6 +103,7 @@ namespace Model
             var rand = new Random();
 
             _isWinnerExist = true;
+            _tickets = _tickets.Where(t => t != null).ToArray();
             var i = rand.Next(_tickets.Length);
             var winner = _tickets[i];
             if (winner == null)

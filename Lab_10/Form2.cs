@@ -20,35 +20,57 @@ namespace Lab_10
         public Form2()
         {
             InitializeComponent();
+            //надо еще попробовать потестить, не все перепробовал ещё варианты
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            var files = Directory.GetFiles(path);
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 MessageBox.Show("Введите название Лотереи!!!");
                 return;
             }
-            //int countParticipants, countTicket, prizeFund;
             if (!int.TryParse(textBox2.Text, out int countParticipants) || countParticipants <= 0)
             {
                 MessageBox.Show("Некорректное количество участников!");
                 return;
             }
+            
 
             if (!int.TryParse(textBox3.Text, out int countTicket) || countTicket <= 0)
             {
                 MessageBox.Show("Некорректное количество билетов!");
                 return;
             }
-
+            if (!int.TryParse(textBox5.Text, out int TicketPrice) || TicketPrice < 0)
+            {
+                MessageBox.Show("Некорректное цена билета!");
+                return;
+            }
             if (!int.TryParse(textBox4.Text, out int prizeFund) || prizeFund <= 0)
             {
                 MessageBox.Show("Некорректный призовой фонд!");
                 return;
             }
+            if (files.Length < countParticipants)
+            {
+                MessageBox.Show("Добавьте больше участников в таблицу!");
+                return;
+            }
+            if (countParticipants > countTicket)
+            {
+                MessageBox.Show("Недостаточно билетов!");
+                return;
+            }
+
 
             string lotteryName = textBox1.Text;
-            var Lottery = new LotteryEvent(lotteryName, countParticipants, countTicket, prizeFund);
+            var Lottery = new LotteryEvent(lotteryName, countParticipants, countTicket, prizeFund, TicketPrice);
             Lottery.FillRandom();
             var winnerTicket = Lottery.GetWinner();
             string id = winnerTicket.TicketID;

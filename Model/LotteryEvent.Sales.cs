@@ -8,6 +8,7 @@ namespace Model
 {
     public partial class LotteryEvent
     {
+        public decimal TicketPrice { get; private set; }
         public LotteryTicket BuyTicket (LotteryParticipant participant)
         {
             return participant.BuyTicket(this);

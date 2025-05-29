@@ -13,7 +13,7 @@ namespace Model
         private int _ticketId;
         private int _ticketLen;
         private LotteryParticipant _participant;
-
+        
         public LotteryParticipant Participant
         {
             get
@@ -38,6 +38,7 @@ namespace Model
             _ticketId = _ticketCounter++;
             _ticketLen = lottery.NumberOfTickets.ToString().Length;
             _participant = participant;
+            _price = lottery.TicketPrice;
         }
     }
 }
