@@ -150,6 +150,21 @@ namespace Lab_10
         private void button3_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            else
+            {
+                var files = Directory.GetFiles(path);
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+            }
+            MessageBox.Show("Таблица очищена");
+
         }
     }
 
