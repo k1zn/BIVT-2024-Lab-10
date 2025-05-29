@@ -104,6 +104,10 @@ namespace Model
 
             _isWinnerExist = true;
             _tickets = _tickets.Where(t => t != null).ToArray();
+            if (_tickets.Length == 0)
+            {
+                return null;
+            }
             var i = rand.Next(_tickets.Length);
             var winner = _tickets[i];
 

@@ -53,12 +53,12 @@ namespace Lab_10
                 ShowError("Указано некорректное количество билетов");
                 return;
             }
-            if (!int.TryParse(textBox5.Text, out int TicketPrice) || TicketPrice < 0)
+            if (!int.TryParse(textBox4.Text, out int TicketPrice) || TicketPrice < 0)
             {
                 ShowError("Указана некорректная цена билета");
                 return;
             }
-            if (!int.TryParse(textBox4.Text, out int prizeFund) || prizeFund <= 0)
+            if (!int.TryParse(textBox5.Text, out int prizeFund) || prizeFund <= 0)
             {
                 ShowError("Указан некорректный призовой фонд");
                 return;
@@ -80,6 +80,12 @@ namespace Lab_10
             var Lottery = new LotteryEvent(lotteryName, countParticipants, countTicket, prizeFund, TicketPrice);
             Lottery.FillRandom();
             var winnerTicket = Lottery.GetWinner();
+            if (winnerTicket == null)
+            {
+                MessageBox.Show($"Победителя нет!!!");
+                serialize(Lottery, "-", "-", DateTimeOffset.UtcNow.ToUnixTimeSeconds(), lotteryName);
+                return;
+            }
             string id = winnerTicket.TicketID;
             var participant = winnerTicket.Participant;
             string initials = participant.Initials;

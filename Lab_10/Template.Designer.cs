@@ -43,7 +43,7 @@
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.Size = new Size(684, 549);
             dataGridView1.TabIndex = 0;
-            dataGridView1.ReadOnly = true;
+            dataGridView1.ReadOnly = false;
             // 
             // button1
             // 
