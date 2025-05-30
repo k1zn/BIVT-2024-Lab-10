@@ -1,6 +1,6 @@
 ﻿namespace Lab_10
 {
-    partial class Form2
+    partial class LotteryCreate
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LotteryCreate));
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -45,18 +45,18 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(22, 27);
+            label1.Location = new Point(19, 20);
             label1.Name = "label1";
-            label1.Size = new Size(138, 20);
+            label1.Size = new Size(107, 15);
             label1.TabIndex = 1;
             label1.Text = "Название лотереи";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(22, 103);
+            label2.Location = new Point(19, 77);
             label2.Name = "label2";
-            label2.Size = new Size(172, 20);
+            label2.Size = new Size(138, 15);
             label2.TabIndex = 3;
             label2.Text = "Количество участников";
             label2.TextAlign = ContentAlignment.TopCenter;
@@ -64,54 +64,59 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(22, 180);
+            label3.Location = new Point(19, 135);
             label3.Name = "label3";
-            label3.Size = new Size(151, 20);
+            label3.Size = new Size(120, 15);
             label3.TabIndex = 5;
             label3.Text = "Количество билетов";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(22, 255);
+            label4.Location = new Point(19, 191);
             label4.Name = "label4";
-            label4.Size = new Size(151, 20);
+            label4.Size = new Size(118, 15);
             label4.TabIndex = 7;
             label4.Text = "Цена одного билета";
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(22, 50);
+            textBox1.Location = new Point(22, 40);
+            textBox1.Margin = new Padding(3, 2, 3, 2);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(212, 27);
+            textBox1.Size = new Size(186, 23);
             textBox1.TabIndex = 2;
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(22, 126);
+            textBox2.Location = new Point(22, 99);
+            textBox2.Margin = new Padding(3, 2, 3, 2);
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(67, 27);
+            textBox2.Size = new Size(59, 23);
             textBox2.TabIndex = 4;
             // 
             // textBox3
             // 
-            textBox3.Location = new Point(22, 203);
+            textBox3.Location = new Point(22, 156);
+            textBox3.Margin = new Padding(3, 2, 3, 2);
             textBox3.Name = "textBox3";
-            textBox3.Size = new Size(67, 27);
+            textBox3.Size = new Size(59, 23);
             textBox3.TabIndex = 6;
             // 
             // textBox4
             // 
-            textBox4.Location = new Point(22, 278);
+            textBox4.Location = new Point(22, 213);
+            textBox4.Margin = new Padding(3, 2, 3, 2);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(67, 27);
+            textBox4.Size = new Size(59, 23);
             textBox4.TabIndex = 8;
             // 
             // button1
             // 
-            button1.Location = new Point(107, 430);
+            button1.Location = new Point(94, 322);
+            button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(195, 29);
+            button1.Size = new Size(171, 22);
             button1.TabIndex = 11;
             button1.Text = "Запустить лотерею";
             button1.UseVisualStyleBackColor = true;
@@ -120,25 +125,27 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(22, 333);
+            label5.Location = new Point(19, 250);
             label5.Name = "label5";
-            label5.Size = new Size(120, 20);
+            label5.Size = new Size(94, 15);
             label5.TabIndex = 9;
             label5.Text = "Призовой фонд";
             // 
             // textBox5
             // 
-            textBox5.Location = new Point(22, 356);
+            textBox5.Location = new Point(22, 270);
+            textBox5.Margin = new Padding(3, 2, 3, 2);
             textBox5.Name = "textBox5";
-            textBox5.Size = new Size(87, 27);
+            textBox5.Size = new Size(77, 23);
             textBox5.TabIndex = 10;
             // 
-            // Form2
+            // LotteryCreate
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AcceptButton = button1;
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Info;
-            ClientSize = new Size(407, 471);
+            ClientSize = new Size(356, 353);
             Controls.Add(textBox5);
             Controls.Add(label5);
             Controls.Add(label1);
@@ -151,8 +158,9 @@
             Controls.Add(textBox4);
             Controls.Add(button1);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
-            Name = "Form2";
+            Name = "LotteryCreate";
             Text = "Новая лотерея";
             ResumeLayout(false);
             PerformLayout();

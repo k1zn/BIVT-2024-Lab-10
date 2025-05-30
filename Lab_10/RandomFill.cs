@@ -10,12 +10,14 @@ using System.Windows.Forms;
 
 namespace Lab_10
 {
-    public partial class countParticipants : Form
+    public partial class RandomFill : Form
     {
         public int count {  get; private set; }
-        public countParticipants()
+        public RandomFill()
         {
             InitializeComponent();
+
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -28,7 +30,7 @@ namespace Lab_10
             }
             else
             {
-                MessageBox.Show("некорректный ввод");
+                MessageBox.Show("Некорректный ввод");
                 return;
             }
         }

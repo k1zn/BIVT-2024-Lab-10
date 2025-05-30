@@ -11,12 +11,14 @@ using System.Windows.Forms;
 
 namespace Lab_10
 {
-    public partial class Form1 : Form
+    public partial class LotteryStats : Form
     {
 
-        public Form1()
+        public LotteryStats()
         {
             InitializeComponent();
+
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
         private void button1_Click(object sender, EventArgs e)
         {

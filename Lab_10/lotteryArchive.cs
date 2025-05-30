@@ -10,11 +10,13 @@ using System.Windows.Forms;
 
 namespace Lab_10
 {
-    public partial class lotteryArchive : Form
+    public partial class LotteryArchive : Form
     {
-        public lotteryArchive()
+        public LotteryArchive()
         {
             InitializeComponent();
+
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
         private void OpenAnyForm<T>() where T : Form, new()
@@ -33,17 +35,17 @@ namespace Lab_10
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenAnyForm<Form2>();
+            OpenAnyForm<LotteryCreate>();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            OpenAnyForm<Form1>();
+            OpenAnyForm<LotteryStats>();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            OpenAnyForm<Template>();
+            OpenAnyForm<ParticipantsTable>();
         }
     }
 }

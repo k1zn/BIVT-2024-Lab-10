@@ -14,12 +14,15 @@ using Newtonsoft.Json.Linq;
 using Model;
 namespace Lab_10
 {
-    public partial class Form2 : Form
+    public partial class LotteryCreate : Form
     {
      
-        public Form2()
+        public LotteryCreate()
         {
             InitializeComponent();
+
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+
             //надо еще попробовать потестить, не все перепробовал ещё варианты
         }
 
@@ -41,7 +44,7 @@ namespace Lab_10
                 ShowError("Укажите название лотереи");
                 return;
             }
-            if (!int.TryParse(textBox2.Text, out int countParticipants) || countParticipants <= 0)
+            if (!int.TryParse(textBox2.Text, out int RandomFill) || RandomFill <= 0)
             {
                 ShowError("Указано некорректное число участников");
                 return;
@@ -53,7 +56,7 @@ namespace Lab_10
                 ShowError("Указано некорректное количество билетов");
                 return;
             }
-            if (!int.TryParse(textBox4.Text, out int TicketPrice) || TicketPrice < 0)
+            if (!int.TryParse(textBox4.Text, out int TicketPrice) || TicketPrice <= 0)
             {
                 ShowError("Указана некорректная цена билета");
                 return;
@@ -63,12 +66,12 @@ namespace Lab_10
                 ShowError("Указан некорректный призовой фонд");
                 return;
             }
-            if (countParticipants > countTicket)
+            if (RandomFill > countTicket)
             {
                 ShowError("Недостаточно билетов для проведения лотереи (количество участников превышает количество билетов)");
                 return;
             }
-            if (files.Length < countParticipants)
+            if (files.Length < RandomFill)
             {
                 ShowError("Недостаточно участников в таблице участников");
                 return;
@@ -77,12 +80,12 @@ namespace Lab_10
 
 
             string lotteryName = textBox1.Text;
-            var Lottery = new LotteryEvent(lotteryName, countParticipants, countTicket, prizeFund, TicketPrice);
+            var Lottery = new LotteryEvent(lotteryName, RandomFill, countTicket, prizeFund, TicketPrice);
             Lottery.FillRandom();
             var winnerTicket = Lottery.GetWinner();
             if (winnerTicket == null)
             {
-                MessageBox.Show($"Победителя нет!!!");
+                ShowError("В данной лотерее нет победителей");
                 serialize(Lottery, "-", "-", DateTimeOffset.UtcNow.ToUnixTimeSeconds(), lotteryName);
                 return;
             }
@@ -93,7 +96,7 @@ namespace Lab_10
             DateTime russiaDateTime = getRussiaDateTime(unixTimestampSeconds);
             serialize(Lottery, initials, id, unixTimestampSeconds, lotteryName);
 
-            MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}");
+            MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
         private DateTime getRussiaDateTime(long unixTimestampSeconds)

@@ -9,27 +9,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace Lab_10
 {
-    public partial class Template : Form
+    public partial class ParticipantsTable : Form
     {
+        private bool dataChanged = false;
         private string[] RandomNames = new string[] { "Максим", "Роберт", "Николай", "Михаил", "Эмин", "Алексей", "Артём", "Тимур", "Роман", "Сергей", "Леонид", "Иван", "Арсений", "Дмитрий", "Данил", "Глеб", "Фёдор", "Егор", "Демид", "Марк", "Александр", "Владимир", "Даниил", "Никита", "Константин", "Руслан", "Лев", "Григорий", "Пётр", "Ярослав", "Дамир", "Илья", "Георгий", "Захар", "Владислав", "Юрий", "Лука", "Денис", "Богдан", "Гордей", "Кирилл", "Степан", "Святослав", "Вадим", "Матвей", "Виктор", "Камиль", "Василий", "Павел", "Даниэль", "Андрей", "Артур", "Семён", "Платон", "Артемий", "Виталий", "Елисей", "Антон", "Тимофей", "Филипп", "Рустам", "Альберт", "Тихон", "Данила", "Родион", "Али", "Мирослав", "Евгений", "Давид", "Савелий", "Игорь", "Назар", "Валерий", "Олег", "Всеволод", "Арсен", "Макар", "Савва", "Адам", "Карим", "Вячеслав", "Станислав", "Эрик", "Мирон", "Герман", "Ян", "Марсель", "Анатолий", "Борис", "Ибрагим", "Леон", "Ростислав", "Серафим", "Демьян", "Яков", "Марат", "Аркадий", "Эмир", "Тигран", "Рафаэль", "Кира", "Анна", "Злата", "Евгения", "Софья", "Дарья", "Дарина", "Вероника", "Мария", "Аделина", "Анастасия", "Алиса", "Вера", "Виктория", "Сафия", "Варвара", "Полина", "Ева", "Арина", "Валерия", "Ульяна", "Малика", "Ариана", "Мирослава", "Есения", "Адель", "Василиса", "Элина", "София", "Кристина", "Александра", "Таисия", "Амалия", "Ирина", "Елизавета", "Аврора", "Мила", "Эмилия", "Агата", "Стефания", "Ангелина", "Екатерина", "Амина", "Милана", "Ксения", "Яна", "Лилия", "Елена", "Аяна", "Амелия", "Ника", "Маргарита", "Майя", "Алина", "Мира", "Алёна", "Марина", "Пелагея", "Юлия", "Камилла", "Ольга", "Алия", "Камила", "Марьям", "Любовь", "Татьяна", "Валентина", "Николь", "Светлана", "Ясмина", "Владислава", "Сабина", "Марьяна", "Антонина", "Лада", "Василина", "Лия", "Агния", "Мелания", "Айлин", "Мия", "Диана", "Ярослава", "Надежда", "Оливия", "Амира", "Наталья", "Фатима", "Алисия", "Эвелина", "Олеся", "Аиша", "Лидия", "Марианна", "Теона", "Альфия", "Медина", "Асия", "Лиана", "Зоя" };
-        string[] RandomCyrillicChars = new string[] {
-            "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й",
-            "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф",
-            "Х", "Ц", "Ч", "Ш", "Щ", "Э", "Ю", "Я"
+        string[] RandomSurnames = new string[]
+        {
+            "Алексо", "Белозёро", "Ветерцо", "Горизо", "Дальино", "Еловцо", "Жемчужино", "Звенисо", "Кристалло", "Лугово",
+"Медисо", "Новело", "Орионово", "Пастеро", "Радиано", "Селесто", "Темпесто", "Улыбко", "Фениксово", "Хармонио",
+"Цветицо", "Чаривно", "Шансово", "Эквилибро", "Ювелиро", "Ясново", "Амплуа", "Бравуро", "Виражо", "Гармонио"
         };
         private List<LotteryParticipant> participants = new List<LotteryParticipant>();
-        public Template()
+        public ParticipantsTable()
         {
             InitializeComponent();
+
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+
+            button3.Enabled = false;
+            button1.Enabled = false;
+
             dataGridView1.Columns.Add("Name", "Имя");
             dataGridView1.Columns.Add("Surname", "Фамилия");
             dataGridView1.Columns.Add("Age", "Возраст");
             dataGridView1.Columns.Add("Balance", "Баланс");
             dataGridView1.Columns.Add("Greed", "Жадность");
+
+            dataGridView1.RowsAdded += DataGridView1_RowsChanged;
+            dataGridView1.RowsRemoved += DataGridView1_RowsChanged;
+
+            dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
+            //dataGridView1.CurrentCellDirtyStateChanged += DataGridView1_CurrentCellDirtyStateChanged; ивент на ячейку, которая была изменена, но еще не был совершен выход из неё. считаю юзлес
+
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
             if (!Directory.Exists(path))
             {
@@ -63,23 +79,55 @@ namespace Lab_10
             for (int i = 0; i < cnt; i++)
             {
                 var name = RandomNames[rand.Next(RandomNames.Length)];
-                var surname = RandomCyrillicChars[rand.Next(RandomCyrillicChars.Length)];
+                var surname = RandomSurnames[rand.Next(RandomSurnames.Length)];
                 var age = rand.Next(18, 46);
                 var balance = rand.Next(100, 1000);
                 var greed = rand.Next(0, 100);
                 dataGridView1.Rows.Add(name, surname, age, balance, greed);
-
             }
-
-
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (dataChanged)
+            {
+                DialogResult result = MessageBox.Show(
+                    "Вы хотите сохранить изменения?",
+                    "Подтверждение",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question);
 
+                if (result == DialogResult.Yes)
+                {
+                    saveTable(false);
+                    return;
+                } else if (result == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                
+            }
+
+            base.OnFormClosing(e);
+        }
+
+        private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            dataChanged = true;
+            this.Text = "(*) Таблица участников";
+        }
+
+        private void DataGridView1_RowsChanged(object sender, EventArgs e)
+        {
+            button3.Enabled = dataGridView1.Rows.Count > 0;
+            button1.Enabled = dataGridView1.Rows.Count > 0;
+        }
 
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var form = new countParticipants();
+            var form = new RandomFill();
             form.ShowDialog();
             int cnt = form.count;
 
@@ -87,6 +135,11 @@ namespace Lab_10
         }
 
         private void button1_Click(object sender, EventArgs e)
+        {
+            saveTable(true);
+        }
+
+        private void saveTable(bool showMsgBox)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
             if (Directory.Exists(path))
@@ -103,6 +156,7 @@ namespace Lab_10
             }
             int rowIndex = 1;
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (row.IsNewRow) continue;
@@ -142,29 +196,32 @@ namespace Lab_10
                 File.WriteAllText(fullpath, jsonObj.ToString());
                 rowIndex++;
             }
-            MessageBox.Show("Список сохранен");
-            this.Close();
+            if (showMsgBox)
+                MessageBox.Show("Список сохранен", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+            dataChanged = false;
+            this.Text = "Таблица участников";
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
+            dataChanged = true;
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-            else
-            {
-                var files = Directory.GetFiles(path);
-                foreach (var file in files)
-                {
-                    File.Delete(file);
-                }
-            }
-            MessageBox.Show("Таблица очищена");
-
+            //else
+            //{
+            //    var files = Directory.GetFiles(path);
+            //    foreach (var file in files)
+            //    {
+            //        File.Delete(file);
+            //    }
+            //}
+            button3.Enabled = false;
+            this.Text = "(*) Таблица участников";
         }
     }
 

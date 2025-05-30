@@ -1,6 +1,6 @@
 ﻿namespace Lab_10
 {
-    partial class lotteryArchive
+    partial class LotteryArchive
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(lotteryArchive));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LotteryArchive));
             button1 = new Button();
             button2 = new Button();
             button3 = new Button();
@@ -39,9 +39,10 @@
             // button1
             // 
             button1.BackColor = Color.Honeydew;
-            button1.Location = new Point(179, 290);
+            button1.Location = new Point(157, 218);
+            button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(251, 81);
+            button1.Size = new Size(220, 61);
             button1.TabIndex = 0;
             button1.Text = "Новая лотерея";
             button1.UseVisualStyleBackColor = false;
@@ -50,9 +51,10 @@
             // button2
             // 
             button2.BackColor = SystemColors.GradientInactiveCaption;
-            button2.Location = new Point(630, 290);
+            button2.Location = new Point(551, 218);
+            button2.Margin = new Padding(3, 2, 3, 2);
             button2.Name = "button2";
-            button2.Size = new Size(251, 81);
+            button2.Size = new Size(220, 61);
             button2.TabIndex = 1;
             button2.Text = "Посмотреть статистику";
             button2.UseVisualStyleBackColor = false;
@@ -62,9 +64,10 @@
             // 
             button3.BackColor = Color.MistyRose;
             button3.ForeColor = SystemColors.ControlText;
-            button3.Location = new Point(400, 415);
+            button3.Location = new Point(350, 311);
+            button3.Margin = new Padding(3, 2, 3, 2);
             button3.Name = "button3";
-            button3.Size = new Size(251, 81);
+            button3.Size = new Size(220, 61);
             button3.TabIndex = 2;
             button3.Text = "Таблица участников";
             button3.UseVisualStyleBackColor = false;
@@ -73,25 +76,27 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources._26da1392_5950_4bb9_a844_7fa6c91ae02e1;
-            pictureBox1.Location = new Point(219, 29);
+            pictureBox1.Location = new Point(157, 11);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(618, 182);
+            pictureBox1.Size = new Size(614, 183);
             pictureBox1.TabIndex = 3;
             pictureBox1.TabStop = false;
             // 
-            // lotteryArchive
+            // LotteryArchive
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Info;
-            ClientSize = new Size(1062, 626);
+            ClientSize = new Size(929, 470);
             Controls.Add(pictureBox1);
             Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(button1);
-            MaximizeBox = false;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Name = "lotteryArchive";
+            Margin = new Padding(3, 2, 3, 2);
+            MaximizeBox = false;
+            Name = "LotteryArchive";
             Text = "ООПЛото";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);

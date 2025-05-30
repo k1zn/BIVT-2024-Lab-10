@@ -1,6 +1,6 @@
 ﻿namespace Lab_10
 {
-    partial class countParticipants
+    partial class RandomFill
     {
         /// <summary>
         /// Required designer variable.
@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RandomFill));
             label1 = new Label();
             textBox1 = new TextBox();
             button1 = new Button();
@@ -36,39 +37,46 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 22);
+            label1.Font = new Font("Segoe UI", 12F);
+            label1.Location = new Point(38, 9);
             label1.Name = "label1";
-            label1.Size = new Size(173, 20);
+            label1.Size = new Size(154, 42);
             label1.TabIndex = 0;
-            label1.Text = "количество участников:";
+            label1.Text = "Введите количество\r\nучастников:";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(12, 45);
+            textBox1.Location = new Point(61, 62);
+            textBox1.Margin = new Padding(3, 2, 3, 2);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(74, 27);
+            textBox1.Size = new Size(104, 23);
             textBox1.TabIndex = 1;
             // 
             // button1
             // 
-            button1.Location = new Point(62, 113);
+            button1.Location = new Point(72, 100);
+            button1.Margin = new Padding(3, 2, 3, 2);
             button1.Name = "button1";
-            button1.Size = new Size(94, 29);
+            button1.Size = new Size(82, 22);
             button1.TabIndex = 2;
             button1.Text = "ОК";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
-            // countParticipants
+            // RandomFill
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(233, 154);
+            BackColor = SystemColors.Info;
+            ClientSize = new Size(219, 133);
             Controls.Add(button1);
             Controls.Add(textBox1);
             Controls.Add(label1);
-            Name = "countParticipants";
-            Text = "countParticipants";
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(3, 2, 3, 2);
+            MaximizeBox = false;
+            Name = "RandomFill";
             ResumeLayout(false);
             PerformLayout();
         }

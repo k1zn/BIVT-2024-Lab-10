@@ -27,7 +27,7 @@ namespace Model
 
         public Person(string name, string surname, int age)
         {
-            Initials = name + " " + surname[0] + ".";
+            Initials = name + " " + surname;
             UserID = _userIdCounter++;
             Age = age;
         }

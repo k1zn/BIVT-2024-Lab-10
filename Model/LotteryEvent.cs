@@ -98,7 +98,7 @@ namespace Model
             var age = Convert.ToInt32(jsonObj["Age"]);
             var balance = Convert.ToInt32(jsonObj["Balance"]);
             var greed = Convert.ToInt32(jsonObj["Greed"]);
-            var participant = new LotteryParticipant(initialsSplit[0], initialsSplit[0][0].ToString(), age, balance, greed);
+            var participant = new LotteryParticipant(initialsSplit[0], initialsSplit[1].ToString(), age, balance, greed);
 
             _participantFileMap[participant] = filePath;
             return participant;
