@@ -123,6 +123,7 @@ namespace Lab_10
         {
             button3.Enabled = dataGridView1.Rows.Count > 0;
             button1.Enabled = dataGridView1.Rows.Count > 0;
+            dataChanged = true;
         }
 
 
