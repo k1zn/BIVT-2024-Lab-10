@@ -85,6 +85,7 @@ namespace Lab_10
                 var greed = rand.Next(0, 100);
                 dataGridView1.Rows.Add(name, surname, age, balance, greed);
             }
+            this.Text = "(*) Таблица участников";
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
