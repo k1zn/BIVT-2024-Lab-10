@@ -32,7 +32,6 @@ namespace Lab_10
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             button3.Enabled = false;
-            button1.Enabled = false;
 
             dataGridView1.Columns.Add("Name", "Имя");
             dataGridView1.Columns.Add("Surname", "Фамилия");
@@ -113,6 +112,11 @@ namespace Lab_10
             base.OnFormClosing(e);
         }
 
+        private bool isDataGridViewEmpty()
+        {
+            return dataGridView1.Rows.Count == 0 || dataGridView1.Rows.Count == 1 && dataGridView1.AllowUserToAddRows && dataGridView1.Rows[0].IsNewRow;
+        }
+
         private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             dataChanged = true;
@@ -121,8 +125,7 @@ namespace Lab_10
 
         private void DataGridView1_RowsChanged(object sender, EventArgs e)
         {
-            button3.Enabled = dataGridView1.Rows.Count > 0;
-            button1.Enabled = dataGridView1.Rows.Count > 0;
+            button3.Enabled = !isDataGridViewEmpty();
             dataChanged = true;
         }
 
@@ -199,7 +202,9 @@ namespace Lab_10
                 rowIndex++;
             }
             if (showMsgBox)
+            {
                 MessageBox.Show("Список сохранен", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
 
             dataChanged = false;
             this.Text = "Таблица участников";
