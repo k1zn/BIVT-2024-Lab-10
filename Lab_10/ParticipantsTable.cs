@@ -112,11 +112,6 @@ namespace Lab_10
             base.OnFormClosing(e);
         }
 
-        private bool isDataGridViewEmpty()
-        {
-            return dataGridView1.Rows.Count == 0 || dataGridView1.Rows.Count == 1 && dataGridView1.AllowUserToAddRows && dataGridView1.Rows[0].IsNewRow;
-        }
-
         private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             dataChanged = true;
@@ -125,7 +120,7 @@ namespace Lab_10
 
         private void DataGridView1_RowsChanged(object sender, EventArgs e)
         {
-            button3.Enabled = !isDataGridViewEmpty();
+            button3.Enabled = !(dataGridView1.Rows.Count == 0 || dataGridView1.Rows.Count == 1 && dataGridView1.AllowUserToAddRows && dataGridView1.Rows[0].IsNewRow);
             dataChanged = true;
         }
 
