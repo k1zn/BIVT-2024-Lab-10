@@ -38,8 +38,10 @@ namespace Model.Core
 
         public string GetPassportInfo(string authKey)
         {
-            // authKey типа должен подходить чтобы мы могли получить из паблик метода паспортные данные, но это было бы слишком в этой лабе
-            return _passportInfo;
+            if (authKey == "admin")
+                return _passportInfo;
+            else
+                return "";
         }
     }
 }
