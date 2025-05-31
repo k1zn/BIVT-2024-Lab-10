@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+
 namespace Model
 {
     public partial class LotteryEvent
@@ -90,6 +86,13 @@ namespace Model
             
             
         }
+
+        private string generateRandomPassportInfo()
+        {
+            var rand = new Random();
+            return "80" + rand.Next(20, 35).ToString() + rand.Next(100000, 999999).ToString();
+        }
+
         private LotteryParticipant deserialize(JObject jsonObj, string filePath)
         {
             if (jsonObj == null) return null;
@@ -98,7 +101,7 @@ namespace Model
             var age = Convert.ToInt32(jsonObj["Age"]);
             var balance = Convert.ToInt32(jsonObj["Balance"]);
             var greed = Convert.ToInt32(jsonObj["Greed"]);
-            var participant = new LotteryParticipant(initialsSplit[0], initialsSplit[1].ToString(), age, balance, greed);
+            var participant = new LotteryParticipant(initialsSplit[0], initialsSplit[1].ToString(), age, balance, generateRandomPassportInfo(), greed); // заглушка, паспортные данные должны лежать в файле, не генерить рандомно в десериалайз
 
             _participantFileMap[participant] = filePath;
             return participant;
