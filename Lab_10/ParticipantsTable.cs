@@ -131,6 +131,12 @@ namespace Lab_10
             saveTable(true);
         }
 
+        private string generateRandomPassportInfo()
+        {
+            var rand = new Random();
+            return "80" + rand.Next(20, 35).ToString() + rand.Next(100000, 999999).ToString();
+        }
+
         private void saveTable(bool showMsgBox)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
@@ -180,16 +186,19 @@ namespace Lab_10
                     ShowMsgBox($"Ошибка в строке {rowIndex}: значение жадности должно находиться в диапазоне от 0 до 100", false);
                     return;
                 }
+
                 var name = row.Cells["Name"].Value.ToString();
                 var surname = row.Cells["Surname"].Value.ToString();
-                var participant = new LotteryParticipant(name, surname, age, balance, greed);
+                var participant = new LotteryParticipant(name, surname, age, balance, generateRandomPassportInfo(), greed);
                 var jsonObj = JObject.FromObject(participant);
                 string fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}.json");
-                if (File.Exists(fullpath)) // 0.00000000000001% chance
+
+                if (File.Exists(fullpath))
                 {
                     int count = Directory.GetFiles(path).Count(file => Path.GetFileName(file).StartsWith($"Participant_{name}_{surname}_{unixTimestampSeconds}", StringComparison.Ordinal));
                     fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}_{count}.json");
                 }
+
                 File.WriteAllText(fullpath, jsonObj.ToString());
                 rowIndex++;
             }

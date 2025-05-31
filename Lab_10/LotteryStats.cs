@@ -109,8 +109,8 @@ namespace Lab_10
             AddNewLabel(jsonObj["NumberOfTickets"].ToString(), tableLayoutPanel1);
             AddNewLabel(jsonObj["PrizeFund"].ToString(), tableLayoutPanel1);
             AddNewLabel(jsonObj["Winner"].ToString(), tableLayoutPanel1);
-            AddNewLabel(jsonObj["Ticket_ID"].ToString(), tableLayoutPanel1);
-            AddNewLabel(jsonObj["timestamp"].ToString(), tableLayoutPanel1);
+            AddNewLabel(jsonObj["TicketID"].ToString(), tableLayoutPanel1);
+            AddNewLabel(jsonObj["Timestamp"].ToString(), tableLayoutPanel1);
         }
 
         private void ShowAllInfo(bool buttonCaller)
