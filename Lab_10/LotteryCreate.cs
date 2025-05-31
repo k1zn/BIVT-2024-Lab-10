@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 using Model;
 namespace Lab_10
 {
-    public partial class LotteryCreate : Form
+    public partial class LotteryCreate : MyForm
     {
      
         public LotteryCreate()
@@ -24,11 +24,6 @@ namespace Lab_10
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             //надо еще попробовать потестить, не все перепробовал ещё варианты
-        }
-
-        private void ShowError(string text)
-        {
-            MessageBox.Show(text, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -41,51 +36,51 @@ namespace Lab_10
             var files = Directory.GetFiles(path);
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
-                ShowError("Укажите название лотереи");
+                ShowMsgBox("Укажите название лотереи", false);
                 return;
             }
-            if (!int.TryParse(textBox2.Text, out int RandomFill) || RandomFill <= 0)
+            if (!int.TryParse(textBox2.Text, out int lotteryParticipantsCount) || lotteryParticipantsCount <= 0)
             {
-                ShowError("Указано некорректное число участников");
+                ShowMsgBox("Указано некорректное число участников", false);
                 return;
             }
             
 
             if (!int.TryParse(textBox3.Text, out int countTicket) || countTicket <= 0)
             {
-                ShowError("Указано некорректное количество билетов");
+                ShowMsgBox("Указано некорректное количество билетов", false);
                 return;
             }
             if (!int.TryParse(textBox4.Text, out int TicketPrice) || TicketPrice <= 0)
             {
-                ShowError("Указана некорректная цена билета");
+                ShowMsgBox("Указана некорректная цена билета", false);
                 return;
             }
             if (!int.TryParse(textBox5.Text, out int prizeFund) || prizeFund <= 0)
             {
-                ShowError("Указан некорректный призовой фонд");
+                ShowMsgBox("Указан некорректный призовой фонд", false);
                 return;
             }
-            if (RandomFill > countTicket)
+            if (lotteryParticipantsCount > countTicket)
             {
-                ShowError("Недостаточно билетов для проведения лотереи (количество участников превышает количество билетов)");
+                ShowMsgBox("Недостаточно билетов для проведения лотереи (количество участников превышает количество билетов)", false);
                 return;
             }
-            if (files.Length < RandomFill)
+            if (files.Length < lotteryParticipantsCount)
             {
-                ShowError("Недостаточно участников в таблице участников");
+                ShowMsgBox("Недостаточно участников в таблице участников", false);
                 return;
             }
 
 
 
             string lotteryName = textBox1.Text;
-            var Lottery = new LotteryEvent(lotteryName, RandomFill, countTicket, prizeFund, TicketPrice);
+            var Lottery = new LotteryEvent(lotteryName, countTicket, lotteryParticipantsCount, prizeFund, TicketPrice);
             Lottery.FillRandom();
             var winnerTicket = Lottery.GetWinner();
             if (winnerTicket == null)
             {
-                ShowError("В данной лотерее нет победителей");
+                ShowMsgBox("В данной лотерее нет победителей. Возможная причина: у выбранных участников не хватает денег на покупку билета", false);
                 serialize(Lottery, "-", "-", DateTimeOffset.UtcNow.ToUnixTimeSeconds(), lotteryName);
                 return;
             }
@@ -93,7 +88,7 @@ namespace Lab_10
             var participant = winnerTicket.Participant;
             string initials = participant.Initials;
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();  
-            DateTime russiaDateTime = getRussiaDateTime(unixTimestampSeconds);
+
             serialize(Lottery, initials, id, unixTimestampSeconds, lotteryName);
 
             MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);

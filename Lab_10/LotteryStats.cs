@@ -11,16 +11,39 @@ using System.Windows.Forms;
 
 namespace Lab_10
 {
-    public partial class LotteryStats : Form
+    public partial class LotteryStats : MyForm
     {
 
         public LotteryStats()
         {
             InitializeComponent();
+            ShowInfo(false);
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
         private void button1_Click(object sender, EventArgs e)
+        {
+            ShowInfo(true);
+        }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
+
+        private const int WM_SETREDRAW = 11;
+        private void ClearTableLayoutPanel(TableLayoutPanel tableLayoutPanel)
+        {
+            SendMessage(tableLayoutPanel1.Handle, WM_SETREDRAW, false, 0);
+
+            tableLayoutPanel.Controls.Clear();
+
+            tableLayoutPanel.RowStyles.Clear();
+
+            tableLayoutPanel.RowCount = 0;
+
+            SendMessage(tableLayoutPanel1.Handle, WM_SETREDRAW, true, 0);
+        }
+
+        private void ShowInfo(bool buttonCaller)
         {
             string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "JSON");
 
@@ -30,21 +53,29 @@ namespace Lab_10
             }
 
             string[] files = Directory.GetFiles(directoryPath);
-            if (files.Length == 0 )
+            if (files.Length == 0)
             {
-                MessageBox.Show("Информация не найдена");
+                if (buttonCaller)
+                {
+                    ShowMsgBox("Информация не найдена (#1)", false);
+                    ClearTableLayoutPanel(tableLayoutPanel1);
+                }
+                    
                 return;
             }
-            ClearTableLayoutPanel(tableLayoutPanel1);
 
             tableLayoutPanel1.SuspendLayout();
+               
+            
+            ClearTableLayoutPanel(tableLayoutPanel1);
 
             foreach (string file in files)
             {
 
                 if (string.IsNullOrEmpty(file))
                 {
-                    MessageBox.Show("Информация не найдена!!!");
+                    if (buttonCaller)
+                        ShowMsgBox("Информация не найдена (#2)", false);
                     return;
                 }
                 var jsonObj = JObject.Parse(File.ReadAllText(file));
@@ -100,17 +131,7 @@ namespace Lab_10
                 tableLayoutPanel1.Controls.Add(label7);
             }
 
-            tableLayoutPanel1.ResumeLayout();
-
-
-           
-        }
-        private void ClearTableLayoutPanel(TableLayoutPanel tableLayoutPanel)
-        {
-            tableLayoutPanel.Controls.Clear();
-
-            tableLayoutPanel.RowStyles.Clear();
-            tableLayoutPanel.RowCount = 0;
+            tableLayoutPanel1.ResumeLayout(true);
         }
 
     }

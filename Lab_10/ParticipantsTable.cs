@@ -14,7 +14,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace Lab_10
 {
-    public partial class ParticipantsTable : Form
+    public partial class ParticipantsTable : MyForm
     {
         private bool dataChanged = false;
         private string[] RandomNames = new string[] { "Максим", "Роберт", "Николай", "Михаил", "Эмин", "Алексей", "Артём", "Тимур", "Роман", "Сергей", "Леонид", "Иван", "Арсений", "Дмитрий", "Данил", "Глеб", "Фёдор", "Егор", "Демид", "Марк", "Александр", "Владимир", "Даниил", "Никита", "Константин", "Руслан", "Лев", "Григорий", "Пётр", "Ярослав", "Дамир", "Илья", "Георгий", "Захар", "Владислав", "Юрий", "Лука", "Денис", "Богдан", "Гордей", "Кирилл", "Степан", "Святослав", "Вадим", "Матвей", "Виктор", "Камиль", "Василий", "Павел", "Даниэль", "Андрей", "Артур", "Семён", "Платон", "Артемий", "Виталий", "Елисей", "Антон", "Тимофей", "Филипп", "Рустам", "Альберт", "Тихон", "Данила", "Родион", "Али", "Мирослав", "Евгений", "Давид", "Савелий", "Игорь", "Назар", "Валерий", "Олег", "Всеволод", "Арсен", "Макар", "Савва", "Адам", "Карим", "Вячеслав", "Станислав", "Эрик", "Мирон", "Герман", "Ян", "Марсель", "Анатолий", "Борис", "Ибрагим", "Леон", "Ростислав", "Серафим", "Демьян", "Яков", "Марат", "Аркадий", "Эмир", "Тигран", "Рафаэль", "Кира", "Анна", "Злата", "Евгения", "Софья", "Дарья", "Дарина", "Вероника", "Мария", "Аделина", "Анастасия", "Алиса", "Вера", "Виктория", "Сафия", "Варвара", "Полина", "Ева", "Арина", "Валерия", "Ульяна", "Малика", "Ариана", "Мирослава", "Есения", "Адель", "Василиса", "Элина", "София", "Кристина", "Александра", "Таисия", "Амалия", "Ирина", "Елизавета", "Аврора", "Мила", "Эмилия", "Агата", "Стефания", "Ангелина", "Екатерина", "Амина", "Милана", "Ксения", "Яна", "Лилия", "Елена", "Аяна", "Амелия", "Ника", "Маргарита", "Майя", "Алина", "Мира", "Алёна", "Марина", "Пелагея", "Юлия", "Камилла", "Ольга", "Алия", "Камила", "Марьям", "Любовь", "Татьяна", "Валентина", "Николь", "Светлана", "Ясмина", "Владислава", "Сабина", "Марьяна", "Антонина", "Лада", "Василина", "Лия", "Агния", "Мелания", "Айлин", "Мия", "Диана", "Ярослава", "Надежда", "Оливия", "Амира", "Наталья", "Фатима", "Алисия", "Эвелина", "Олеся", "Аиша", "Лидия", "Марианна", "Теона", "Альфия", "Медина", "Асия", "Лиана", "Зоя" };
@@ -54,6 +54,9 @@ namespace Lab_10
             deserialize(files);
 
         }
+
+
+
         private void deserialize(string[] files)
         {
             if (files.Length == 0)
@@ -70,7 +73,6 @@ namespace Lab_10
             }
         }
 
-
         private void addParticipants(int cnt)
         {
 
@@ -85,6 +87,7 @@ namespace Lab_10
                 dataGridView1.Rows.Add(name, surname, age, balance, greed);
             }
             this.Text = "(*) Таблица участников";
+            dataChanged = true;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -101,12 +104,12 @@ namespace Lab_10
                 {
                     saveTable(false);
                     return;
-                } else if (result == DialogResult.Cancel)
+                }
+                else if (result == DialogResult.Cancel)
                 {
                     e.Cancel = true;
                     return;
                 }
-                
             }
 
             base.OnFormClosing(e);
@@ -121,17 +124,6 @@ namespace Lab_10
         private void DataGridView1_RowsChanged(object sender, EventArgs e)
         {
             button3.Enabled = !(dataGridView1.Rows.Count == 0 || dataGridView1.Rows.Count == 1 && dataGridView1.AllowUserToAddRows && dataGridView1.Rows[0].IsNewRow);
-            dataChanged = true;
-        }
-
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            var form = new RandomFill();
-            form.ShowDialog();
-            int cnt = form.count;
-
-            addParticipants(cnt);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -163,29 +155,29 @@ namespace Lab_10
 
                 if (!int.TryParse(row.Cells["Age"].Value?.ToString(), out int age))
                 {
-                    MessageBox.Show($"Ошибка в строке {rowIndex}: Возраст должен быть числом!");
+                    ShowMsgBox($"Ошибка в строке {rowIndex}: возраст должен быть числом", false);
                     return;
                 }
 
                 if (!decimal.TryParse(row.Cells["Balance"].Value?.ToString(), out decimal balance))
                 {
-                    MessageBox.Show($"Ошибка в строке {rowIndex}: Баланс должен быть числом!");
+                    ShowMsgBox($"Ошибка в строке {rowIndex}: баланс должен быть числом", false);
                     return;
                 }
                 else if (balance < 0)
                 {
-                    MessageBox.Show($"Ошибка в строке {rowIndex}: Баланс должен быть положительным!");
+                    ShowMsgBox($"Ошибка в строке {rowIndex}: баланс должен быть положительным", false);
                     return;
                 }
 
                 if (!int.TryParse(row.Cells["Greed"].Value?.ToString(), out int greed))
                 {
-                    MessageBox.Show($"Ошибка в строке {rowIndex}: Жадность должна быть числом!");
+                    ShowMsgBox($"Ошибка в строке {rowIndex}: жадность должна быть числом", false);
                     return;
                 }
                 else if (greed > 100 || greed < 0)
                 {
-                    MessageBox.Show($"Ошибка в строке {rowIndex}: Значение жадности должно находиться в диапазоне от 0 до 100");
+                    ShowMsgBox($"Ошибка в строке {rowIndex}: значение жадности должно находиться в диапазоне от 0 до 100", false);
                     return;
                 }
                 var name = row.Cells["Name"].Value.ToString();
@@ -198,7 +190,7 @@ namespace Lab_10
             }
             if (showMsgBox)
             {
-                MessageBox.Show("Список сохранен", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ShowMsgBox("Список сохранен", true);
             }
 
             dataChanged = false;
@@ -208,22 +200,30 @@ namespace Lab_10
         private void button3_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
-            dataChanged = true;
+            
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-            //else
-            //{
-            //    var files = Directory.GetFiles(path);
-            //    foreach (var file in files)
-            //    {
-            //        File.Delete(file);
-            //    }
-            //}
+
             button3.Enabled = false;
+
+            dataChanged = true;
             this.Text = "(*) Таблица участников";
+
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            string textboxValue = textBox1.Text;
+            int count;
+            if (!int.TryParse(textboxValue, out count) || count <= 0)
+            {
+                ShowMsgBox("Указано некорректное число", false);
+                return;
+            }
+            addParticipants(count);
         }
     }
 

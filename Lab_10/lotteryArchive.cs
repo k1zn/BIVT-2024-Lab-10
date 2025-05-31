@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Lab_10
 {
-    public partial class LotteryArchive : Form
+    public partial class LotteryArchive : MyForm
     {
         public LotteryArchive()
         {
@@ -19,7 +19,7 @@ namespace Lab_10
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
-        private void OpenAnyForm<T>() where T : Form, new()
+        private void OpenAnyForm<T>() where T : MyForm, new()
         {
             foreach (Form form in Application.OpenForms)
             {

@@ -61,9 +61,9 @@ namespace Model
             }
             var files = Directory.GetFiles(path);
             if (files.Length == 0) return;
-            if (files.Length > NumberOfTickets)
+            if (files.Length > NumberOfParticipants)
             {
-                files = files.OrderBy(f => rand.Next()).Take(NumberOfTickets).ToArray();
+                files = files.OrderBy(f => rand.Next()).Take(NumberOfParticipants).ToArray();
             }
             int index = 0;
             foreach (var file in files)
