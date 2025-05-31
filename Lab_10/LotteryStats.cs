@@ -99,7 +99,7 @@ namespace Lab_10
                 ShowMsgBox($"Лотерея {Path.GetFileNameWithoutExtension(filePath)} не будет отображена из-за ошибки чтения", true);
             }
 
-            if (!success) return;
+            if (!success || jsonObj == null) return;
 
             tableLayoutPanel1.RowCount++;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));

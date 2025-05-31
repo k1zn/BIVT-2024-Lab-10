@@ -110,8 +110,8 @@ namespace Lab_10
         {
             var jsonObj = JObject.FromObject(obj);
             jsonObj["Winner"] = initials;
-            jsonObj["Ticket_ID"] = id;
-            jsonObj["timestamp"] = getRussiaDateTime(unixTimestampSeconds);
+            jsonObj["TicketID"] = id;
+            jsonObj["Timestamp"] = getRussiaDateTime(unixTimestampSeconds);
             string path = Path.Combine(Directory.GetCurrentDirectory(), "JSON");
             if (!Directory.Exists(path))
             {
