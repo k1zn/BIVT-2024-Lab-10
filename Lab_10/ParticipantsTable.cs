@@ -184,7 +184,12 @@ namespace Lab_10
                 var surname = row.Cells["Surname"].Value.ToString();
                 var participant = new LotteryParticipant(name, surname, age, balance, greed);
                 var jsonObj = JObject.FromObject(participant);
-                string fullpath = Path.Combine(path, $"Participant_{unixTimestampSeconds++}.json");
+                string fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}.json");
+                if (File.Exists(fullpath)) // 0.00000000000001% chance
+                {
+                    int count = Directory.GetFiles(path).Count(file => Path.GetFileName(file).StartsWith($"Participant_{name}_{surname}_{unixTimestampSeconds}", StringComparison.Ordinal));
+                    fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}_{count}.json");
+                }
                 File.WriteAllText(fullpath, jsonObj.ToString());
                 rowIndex++;
             }

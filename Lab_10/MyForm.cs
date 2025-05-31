@@ -12,5 +12,10 @@ namespace Lab_10
         {
             MessageBox.Show(text, isInfo ? "Информация" : "Ошибка", MessageBoxButtons.OK, isInfo ? MessageBoxIcon.Information : MessageBoxIcon.Error);
         }
+
+        public class LotteryPathEventArgs : EventArgs
+        {
+            public string LotteryPath { get; set; }
+        }
     }
 }

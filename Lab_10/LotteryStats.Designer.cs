@@ -55,13 +55,13 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Cursor = Cursors.No;
+            tableLayoutPanel1.Cursor = Cursors.Default;
             tableLayoutPanel1.Location = new Point(11, 70);
             tableLayoutPanel1.Margin = new Padding(3, 2, 3, 2);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 352F));
-            tableLayoutPanel1.Size = new Size(1110, 352);
+            tableLayoutPanel1.Size = new Size(1110, 354);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // label4

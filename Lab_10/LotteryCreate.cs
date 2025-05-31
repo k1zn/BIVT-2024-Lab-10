@@ -22,9 +22,9 @@ namespace Lab_10
             InitializeComponent();
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-
-            //надо еще попробовать потестить, не все перепробовал ещё варианты
         }
+
+        public static event EventHandler<MyForm.LotteryPathEventArgs> LotteryCreated;
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -37,11 +37,13 @@ namespace Lab_10
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 ShowMsgBox("Укажите название лотереи", false);
+                textBox1.Focus();
                 return;
             }
             if (!int.TryParse(textBox2.Text, out int lotteryParticipantsCount) || lotteryParticipantsCount <= 0)
             {
                 ShowMsgBox("Указано некорректное число участников", false);
+                textBox2.Focus();
                 return;
             }
             
@@ -49,21 +51,25 @@ namespace Lab_10
             if (!int.TryParse(textBox3.Text, out int countTicket) || countTicket <= 0)
             {
                 ShowMsgBox("Указано некорректное количество билетов", false);
+                textBox3.Focus();
                 return;
             }
             if (!int.TryParse(textBox4.Text, out int TicketPrice) || TicketPrice <= 0)
             {
                 ShowMsgBox("Указана некорректная цена билета", false);
+                textBox4.Focus();
                 return;
             }
             if (!int.TryParse(textBox5.Text, out int prizeFund) || prizeFund <= 0)
             {
                 ShowMsgBox("Указан некорректный призовой фонд", false);
+                textBox5.Focus();
                 return;
             }
             if (lotteryParticipantsCount > countTicket)
             {
                 ShowMsgBox("Недостаточно билетов для проведения лотереи (количество участников превышает количество билетов)", false);
+                textBox3.Focus();
                 return;
             }
             if (files.Length < lotteryParticipantsCount)
@@ -92,7 +98,6 @@ namespace Lab_10
             serialize(Lottery, initials, id, unixTimestampSeconds, lotteryName);
 
             MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
         }
         private DateTime getRussiaDateTime(long unixTimestampSeconds)
         {
@@ -114,6 +119,8 @@ namespace Lab_10
             }
             string fullPath = Path.Combine(path, $"{lotteryName}_{unixTimestampSeconds}.json");
             File.WriteAllText(fullPath, jsonObj.ToString());
+
+            LotteryCreated?.Invoke(this, new MyForm.LotteryPathEventArgs { LotteryPath = fullPath });
         }
     }
 }
