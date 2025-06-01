@@ -110,21 +110,5 @@ namespace Lab_10
             TimeZoneInfo russiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
             return TimeZoneInfo.ConvertTimeFromUtc(dateTime, russiaTimeZone);
         }
-        private void serialize<T>(T obj, string initials, string id, long unixTimestampSeconds, string lotteryName)
-        {
-            var jsonObj = JObject.FromObject(obj);
-            jsonObj["Winner"] = initials;
-            jsonObj["TicketID"] = id;
-            jsonObj["Timestamp"] = getRussiaDateTime(unixTimestampSeconds);
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "JSON");
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            string fullPath = Path.Combine(path, $"{lotteryName}_{unixTimestampSeconds}.json");
-            File.WriteAllText(fullPath, jsonObj.ToString());
-
-            LotteryCreated?.Invoke(this, new MyForm.LotteryPathEventArgs { LotteryPath = fullPath });
-        }
     }
 }
