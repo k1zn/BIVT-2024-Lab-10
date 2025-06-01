@@ -1,9 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Model.Data;
+using Newtonsoft.Json.Linq;
 
 namespace Model
 {
     public partial class LotteryEvent
     {
+
+        private int _futureTicketID = 1;
         public int NumberOfTickets
         {
             get; private set;
@@ -26,14 +29,29 @@ namespace Model
 
         private bool _isWinnerExist;
         private LotteryTicket _winnerTicket;
+        private LotteryParticipant _winnerParticipant;
+
+        public LotteryTicket WinnerTicket
+        {
+            get
+            {
+                return _winnerTicket;
+            }
+        }
+
+        public LotteryParticipant WinnerParticipant
+        {
+            get
+            {
+                return _winnerParticipant;
+            }
+        }
 
         private LotteryParticipant[] _lotteryParticipants;
 
         private LotteryTicket[] _tickets;
 
-        private Dictionary<LotteryParticipant, string> _participantFileMap = new Dictionary<LotteryParticipant, string>();
-
-        public LotteryEvent(string eventName, int numberOfTickets, int numberOfParticipants, int prizeFund, decimal ticketprice)
+        public LotteryEvent(string eventName, int numberOfTickets, int numberOfParticipants, int prizeFund, decimal ticketPrice)
         {
             if (numberOfTickets <= 0)
                 throw new ArgumentException("Number of tickets must be > 0");
@@ -42,9 +60,57 @@ namespace Model
             NumberOfTickets = numberOfTickets;
             NumberOfParticipants = numberOfParticipants;
             PrizeFund = prizeFund;
-            TicketPrice = ticketprice;
-            _tickets = new LotteryTicket[numberOfTickets];
-            _lotteryParticipants = new LotteryParticipant[numberOfParticipants];
+            TicketPrice = ticketPrice;
+            _tickets = new LotteryTicket[0];
+            _lotteryParticipants = new LotteryParticipant[0];
+        }
+
+        public LotteryEvent(string eventName, int numberOfTickets, int numberOfParticipants, int prizeFund, decimal ticketPrice, LotteryParticipant winner) : this(eventName, numberOfTickets, numberOfParticipants, prizeFund, ticketPrice)
+        {
+            _isWinnerExist = true;
+            _winnerParticipant = winner;
+            if (_winnerParticipant.Tickets == null)
+            {
+                throw new Exception("Winner can't have null tickets!");
+            }
+            foreach (var ticket in _winnerParticipant.Tickets)
+            {
+                if (ticket == null) continue;
+                if (ticket.LotteryName == eventName)
+                {
+                    _winnerTicket = ticket;
+                    break;
+                }
+            } 
+        }
+
+        public int GetFutureTicketID()
+        {
+            int ans = _futureTicketID;
+            _futureTicketID++;
+
+            return ans;
+        }
+
+        public void AddParticipantAndHisTickets(LotteryParticipant participant)
+        {
+            if (_lotteryParticipants.Length > NumberOfParticipants) return;
+            if (participant == null) return;
+
+            Array.Resize(ref _lotteryParticipants, _lotteryParticipants.Length + 1);
+            _lotteryParticipants[_lotteryParticipants.Length - 1] = participant;
+
+            if (participant.Tickets.Length == 0) return;
+            _tickets = _tickets.Concat(participant.Tickets.Where(t => t != null).ToArray()).ToArray();
+        }
+
+        public void AddParticipantAndHisTickets(LotteryParticipant[] participants)
+        {
+            if (participants == null) return;
+            foreach (var participant in participants)
+            {
+                AddParticipantAndHisTickets(participant);
+            }
         }
 
         public void FillRandom()
@@ -61,77 +127,68 @@ namespace Model
             {
                 files = files.OrderBy(f => rand.Next()).Take(NumberOfParticipants).ToArray();
             }
-            int index = 0;
             foreach (var file in files)
             {
-                var jsonObj = JObject.Parse(File.ReadAllText(file));
-                var participant = deserialize(jsonObj, file);
-                if (participant != null) 
-                    _lotteryParticipants[index++] = participant;
+                var serializer = new LotteryArchiveJSONSerializer();
+                var participant = serializer.DeserializeLotteryParticipant(Path.GetFileName(file));
+                if (participant != null)
+                {
+                    Array.Resize(ref _lotteryParticipants, _lotteryParticipants.Length + 1);
+                    _lotteryParticipants[_lotteryParticipants.Length - 1] = participant;
+                }
+                    
             }
             
             _lotteryParticipants = _lotteryParticipants.Where(r => r != null)
                 .OrderByDescending(participant => participant.Greed).ToArray();
-            index = 0;
             foreach (var participant in _lotteryParticipants)
             {
-                var ticket = participant.BuyTicket(this);
-                string pathToParticipant = _participantFileMap[participant];
-                if (pathToParticipant != null && ticket!=null)
+                var ticket = participant.AddTicket(this);
+                if (ticket != null)
                 {
-                    File.WriteAllText(pathToParticipant, JObject.FromObject(participant).ToString());
+                    var serializer = new LotteryArchiveJSONSerializer();
+                    serializer.SerializeLotteryParticipant(participant);
+                    //File.WriteAllText(pathToParticipant, JObject.FromObject(participant).ToString());
                 }
-                if (ticket != null) _tickets[index++] = ticket;
+                if (ticket != null)
+                {
+                    Array.Resize(ref _tickets, _tickets.Length + 1);
+                    _tickets[_tickets.Length - 1] = ticket;
+                }
             }
             
             
         }
 
-        private string generateRandomPassportInfo()
-        {
-            var rand = new Random();
-            return "80" + rand.Next(20, 35).ToString() + rand.Next(100000, 999999).ToString();
-        }
-
-        private LotteryParticipant deserialize(JObject jsonObj, string filePath)
-        {
-            if (jsonObj == null) return null;
-            var initials = jsonObj["Initials"].ToString();
-            var initialsSplit = initials.Split(" ");
-            var age = Convert.ToInt32(jsonObj["Age"]);
-            var balance = Convert.ToInt32(jsonObj["Balance"]);
-            var greed = Convert.ToInt32(jsonObj["Greed"]);
-            var participant = new LotteryParticipant(initialsSplit[0], initialsSplit[1].ToString(), age, balance, generateRandomPassportInfo(), greed); // заглушка, паспортные данные должны лежать в файле, не генерить рандомно в десериалайз
-
-            _participantFileMap[participant] = filePath;
-            return participant;
-        }
         public LotteryTicket GetWinner()
         {
             if (_isWinnerExist) return _winnerTicket;
 
-            var rand = new Random();
 
-            _isWinnerExist = true;
             _tickets = _tickets.Where(t => t != null).ToArray();
             if (_tickets.Length == 0)
             {
                 return null;
             }
+
+            var rand = new Random();
+            _isWinnerExist = true;
+
             var i = rand.Next(_tickets.Length);
             var winner = _tickets[i];
-            var winnerParticipant = winner.Participant;
-            var newBalance = winnerParticipant.Balance+PrizeFund;
-            string pathToParticipant = _participantFileMap[winnerParticipant];
-            var jsonObj = JObject.FromObject(winnerParticipant);
-            jsonObj["Balance"] = newBalance;
-            File.WriteAllText(pathToParticipant,jsonObj.ToString());
-
             if (winner == null)
             {
-                throw new Exception($"error! {_tickets.Length} {i}");
+                throw new Exception($"Error! {_tickets.Length} {i}");
             }
             _winnerTicket = winner;
+
+            var winnerParticipant = winner.Participant;
+            winnerParticipant.AddBalance(PrizeFund);
+
+            var serializer = new LotteryArchiveJSONSerializer();
+            serializer.SerializeLotteryParticipant(winnerParticipant);
+
+            _winnerParticipant = winnerParticipant;
 
             return winner;
         }

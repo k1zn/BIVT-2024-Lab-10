@@ -1,4 +1,5 @@
 ﻿using Model;
+using Model.Data;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -134,7 +135,7 @@ namespace Lab_10
         private string generateRandomPassportInfo()
         {
             var rand = new Random();
-            return "80" + rand.Next(20, 35).ToString() + rand.Next(100000, 999999).ToString();
+            return rand.Next(1, 10000).ToString() + DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         }
 
         private void saveTable(bool showMsgBox)
@@ -152,12 +153,14 @@ namespace Lab_10
             {
                 Directory.CreateDirectory(path);
             }
-            int rowIndex = 1;
+
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (row.IsNewRow) continue;
+
+                var rowIndex = row.Index + 1;
 
                 if (!int.TryParse(row.Cells["Age"].Value?.ToString(), out int age))
                 {
@@ -190,17 +193,20 @@ namespace Lab_10
                 var name = row.Cells["Name"].Value.ToString();
                 var surname = row.Cells["Surname"].Value.ToString();
                 var participant = new LotteryParticipant(name, surname, age, balance, generateRandomPassportInfo(), greed);
-                var jsonObj = JObject.FromObject(participant);
-                string fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}.json");
+                //var jsonObj = JObject.FromObject(participant);
+                //string fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}.json");
 
-                if (File.Exists(fullpath))
-                {
-                    int count = Directory.GetFiles(path).Count(file => Path.GetFileName(file).StartsWith($"Participant_{name}_{surname}_{unixTimestampSeconds}", StringComparison.Ordinal));
-                    fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}_{count}.json");
-                }
+                //if (File.Exists(fullpath))
+                //{
+                //    int count = Directory.GetFiles(path).Count(file => Path.GetFileName(file).StartsWith($"Participant_{name}_{surname}_{unixTimestampSeconds}", StringComparison.Ordinal));
+                //    fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}_{count}.json");
+                //}
 
-                File.WriteAllText(fullpath, jsonObj.ToString());
-                rowIndex++;
+                var serializer = new LotteryArchiveJSONSerializer();
+                serializer.SerializeLotteryParticipant(participant);
+
+                //File.WriteAllText(fullpath, jsonObj.ToString());
+                //rowIndex++; заменено на row.Index
             }
             if (showMsgBox)
             {

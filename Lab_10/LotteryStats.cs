@@ -94,7 +94,7 @@ namespace Lab_10
                     jsonObj = JObject.Load(jsonTextReader);
                     success = true;
                 }
-            } catch (Exception ex)
+            } catch (Exception)
             {
                 ShowMsgBox($"Лотерея {Path.GetFileNameWithoutExtension(filePath)} не будет отображена из-за ошибки чтения", true);
             }

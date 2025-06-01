@@ -11,5 +11,10 @@ namespace Model
         public decimal Balance {  get;private set; }
         public int Greed { get; private set; }
 
+        public void AddBalance(decimal balance)
+        {
+            Balance += balance;
+        }
+
     }
 }

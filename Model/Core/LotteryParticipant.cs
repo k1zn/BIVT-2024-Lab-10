@@ -13,6 +13,8 @@ namespace Model
         {
             Balance = initialBalance;
             Greed = greed;
+
+            _tickets = new LotteryTicket[0];
         }
 
         private LotteryTicket[] _tickets;
@@ -21,26 +23,37 @@ namespace Model
         {
             get
             {
-                if (_tickets == null)
-                    return new LotteryTicket[0];
-
-                return (LotteryTicket[])_tickets.Clone();
+                return _tickets;
             }
         }
 
-        public LotteryTicket BuyTicket(LotteryEvent lottery)
+        public LotteryTicket AddTicket(LotteryEvent lottery)
         {
-            var ticket = new LotteryTicket(lottery, this);
-            if (ticket.Price <= Balance)
+            if (lottery.TicketPrice <= Balance)
             {
-                Balance-=ticket.Price;
-                Array.Resize(ref _tickets, Tickets.Length + 1);
-                Tickets[^1] = ticket;
+                var ticket = new LotteryTicket(lottery, this);
+                Balance -= ticket.Price;
+                Array.Resize(ref _tickets, _tickets.Length + 1);
+                _tickets[^1] = ticket;
                 return ticket;
             }
             else return null;
 
             
+        }
+
+        public void AddTicket(LotteryTicket ticket)
+        {
+            if (ticket == null) return;
+
+            Array.Resize(ref _tickets, _tickets.Length + 1);
+            _tickets[^1] = ticket;
+        }
+
+        public string GetPathToSerialized(string authKey)
+        {
+            if (authKey != "admin") return "";
+            return Path.Combine(Directory.GetCurrentDirectory(), "Participants", $"Participant_{this.Initials}_{this.GetPassportInfo(authKey)}.json");
         }
 
     }

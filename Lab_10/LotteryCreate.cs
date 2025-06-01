@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Model;
+using Model.Data;
 namespace Lab_10
 {
     public partial class LotteryCreate : MyForm
@@ -87,15 +88,18 @@ namespace Lab_10
             if (winnerTicket == null)
             {
                 ShowMsgBox("В данной лотерее нет победителей. Возможная причина: у выбранных участников не хватает денег на покупку билета", false);
-                serialize(Lottery, "-", "-", DateTimeOffset.UtcNow.ToUnixTimeSeconds(), lotteryName);
                 return;
             }
             string id = winnerTicket.TicketID;
             var participant = winnerTicket.Participant;
             string initials = participant.Initials;
-            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();  
+            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            serialize(Lottery, initials, id, unixTimestampSeconds, lotteryName);
+            //serialize(Lottery, initials, id, unixTimestampSeconds, lotteryName);
+
+            var serializer = new LotteryArchiveJSONSerializer();
+            var fullPath = serializer.SerializeLottery(Lottery);
+            LotteryCreated?.Invoke(this, new MyForm.LotteryPathEventArgs { LotteryPath = fullPath });
 
             MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
