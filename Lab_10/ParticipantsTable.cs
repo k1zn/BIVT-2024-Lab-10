@@ -203,6 +203,8 @@ namespace Lab_10
                 //}
 
                 var serializer = new LotteryArchiveJSONSerializer();
+                serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
+                serializer.SelectFile($"Participant_{participant.Initials}_{participant.GetPassportInfo("admin")}");
                 serializer.SerializeLotteryParticipant(participant);
 
                 //File.WriteAllText(fullpath, jsonObj.ToString());

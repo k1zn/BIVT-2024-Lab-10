@@ -51,13 +51,7 @@ namespace Model.Data
             jsonObj["TicketID"] = winnerTicketID;
             jsonObj["Timestamp"] = getRussiaDateTime(unixTimestampSeconds);
 
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "JSON");
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            string fullPath = Path.Combine(folderPath, $"{e.EventName}_{unixTimestampSeconds}.json");
+            string fullPath = FilePath; // SelectFolder + SelectFile
             File.WriteAllText(fullPath, jsonObj.ToString());
 
             return fullPath;
@@ -73,9 +67,7 @@ namespace Model.Data
 
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
-            string fullPath = Path.Combine(folderPath, $"Participant_{participant.Initials}_{participant.GetPassportInfo("admin")}.json");
-
+            string fullPath = FilePath; // SelectFolder + SelectFile
             File.WriteAllText(fullPath, jsonObj.ToString());
 
             return fullPath;
@@ -111,13 +103,7 @@ namespace Model.Data
 
         public override LotteryEvent DeserializeLottery(string fileName)
         {
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "JSON");
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            string fullPath = Path.Combine(folderPath, fileName);
+            string fullPath = FilePath; // SelectFolder + SelectFile
             if (!File.Exists(fullPath)) return null;
 
             JObject jsonObj = null;
@@ -152,17 +138,13 @@ namespace Model.Data
             return lottery;
 
         }
-        public override LotteryParticipant DeserializeLotteryParticipant<T>(T source)
+        public override LotteryParticipant DeserializeLotteryParticipant<T>(T source = default)
         {
             JObject jsonObj = null;
 
-            if (source is string fileName)
+            if (source == null)
             {
-                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
-
-                string fullPath = Path.Combine(folderPath, fileName);
+                string fullPath = FilePath; // SelectFolder + SelectFile
                 if (!File.Exists(fullPath)) return null;
 
                 try

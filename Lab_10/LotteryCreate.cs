@@ -98,8 +98,10 @@ namespace Lab_10
             //serialize(Lottery, initials, id, unixTimestampSeconds, lotteryName);
 
             var serializer = new LotteryArchiveJSONSerializer();
-            var fullPath = serializer.SerializeLottery(Lottery);
-            LotteryCreated?.Invoke(this, new MyForm.LotteryPathEventArgs { LotteryPath = fullPath });
+            serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "JSON"));
+            serializer.SelectFile($"{Lottery.EventName}_{unixTimestampSeconds}");
+
+            LotteryCreated?.Invoke(this, new MyForm.LotteryPathEventArgs { LotteryPath = serializer.FilePath });
 
             MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

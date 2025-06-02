@@ -130,7 +130,9 @@ namespace Model
             foreach (var file in files)
             {
                 var serializer = new LotteryArchiveJSONSerializer();
-                var participant = serializer.DeserializeLotteryParticipant<string>(Path.GetFileName(file));
+                serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
+                serializer.SelectFile(Path.GetFileNameWithoutExtension(file));
+                var participant = serializer.DeserializeLotteryParticipant<object>();
                 if (participant != null)
                 {
                     Array.Resize(ref _lotteryParticipants, _lotteryParticipants.Length + 1);
@@ -147,6 +149,8 @@ namespace Model
                 if (ticket != null)
                 {
                     var serializer = new LotteryArchiveJSONSerializer();
+                    serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
+                    serializer.SelectFile($"Participant_{participant.Initials}_{participant.GetPassportInfo("admin")}");
                     serializer.SerializeLotteryParticipant(participant);
                     //File.WriteAllText(pathToParticipant, JObject.FromObject(participant).ToString());
                 }
@@ -186,6 +190,8 @@ namespace Model
             winnerParticipant.AddBalance(PrizeFund);
 
             var serializer = new LotteryArchiveJSONSerializer();
+            serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
+            serializer.SelectFile($"Participant_{participant.Initials}_{participant.GetPassportInfo("admin")}");
             serializer.SerializeLotteryParticipant(winnerParticipant);
 
             _winnerParticipant = winnerParticipant;
