@@ -11,9 +11,10 @@ namespace Model
         public decimal Balance {  get;private set; }
         public int Greed { get; private set; }
 
-        public void AddBalance(decimal balance)
+        public void AddBalance(decimal balance, LotteryEvent lottery)
         {
-            Balance += balance;
+            if (lottery.WinnerParticipant == this)
+                Balance += balance;
         }
 
     }

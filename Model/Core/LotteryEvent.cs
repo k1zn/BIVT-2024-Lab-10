@@ -187,14 +187,15 @@ namespace Model
             _winnerTicket = winner;
 
             var winnerParticipant = winner.Participant;
-            winnerParticipant.AddBalance(PrizeFund);
+            _winnerParticipant = winnerParticipant;
+            winnerParticipant.AddBalance(PrizeFund, this);
 
             var serializer = new LotteryArchiveJSONSerializer();
             serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
-            serializer.SelectFile($"Participant_{participant.Initials}_{participant.GetPassportInfo("admin")}");
+            serializer.SelectFile($"Participant_{winnerParticipant.Initials}_{winnerParticipant.GetPassportInfo("admin")}");
             serializer.SerializeLotteryParticipant(winnerParticipant);
 
-            _winnerParticipant = winnerParticipant;
+            
 
             return winner;
         }
