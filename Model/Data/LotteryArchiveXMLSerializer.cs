@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Net.Sockets;
 
 namespace Model.Data
 {
@@ -28,6 +29,15 @@ namespace Model.Data
             using (var writer = XmlWriter.Create(FullPath))
             {
                 serializer.Serialize(writer, obj);
+            }
+        }
+
+        private T XMLDeserialize<T>(string fullPath)
+        {
+            var serializer = new XmlSerializer(typeof(T));
+            using (var reader = new StreamReader(fullPath))
+            {
+                return (T)serializer.Deserialize(reader);
             }
         }
 
@@ -65,18 +75,93 @@ namespace Model.Data
 
         public override LotteryEvent DeserializeLottery(string fileName)
         {
-            throw new NotImplementedException();
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
+            string fullPath = Path.Combine(folderPath, fileName);
+            if (!File.Exists(fullPath)) return null;
+            XmlSerializer serializer = new XmlSerializer(typeof(LotteryEventDTO));
+            using (FileStream stream = new FileStream(fullPath, FileMode.Open))
+            {
+                var dto = (LotteryEventDTO)serializer.Deserialize(stream);
+                return new LotteryEvent
+                (
+                    dto.lotteryName,
+                    dto.numberOfTickets,
+                    dto.numberOfParticipants,
+                    dto.PrizeFund,
+                    dto.TicketPrice
+                   
+                );
+            }
         }
-
         public override LotteryParticipant DeserializeLotteryParticipant<T>(T obj)
         {
-            throw new NotImplementedException();
+            if (obj is string fileName)
+            {
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
+                string fullPath = Path.Combine(folderPath, fileName);
+                if (!File.Exists(fullPath)) return null;
+
+                try
+                {
+                    var dto = XMLDeserialize<ParticipantDTO>(fullPath);
+                    var participant = new LotteryParticipant(
+                        dto.Initials,
+                        dto.Initials,
+                        dto.Age,
+                        dto.Balance,
+                        dto.PassportInfo,
+                        dto.Greed
+                    );
+
+                    foreach (var ticketDto in dto.Tickets)
+                    {
+                        participant.AddTicket(new LotteryTicket(
+                            int.Parse(ticketDto.TicketID),
+                            ticketDto.TicketLen,
+                            ticketDto.Price,
+                            ticketDto.LotteryName,
+                            participant
+                        ));
+                    }
+                    return participant;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            throw new ArgumentException("некорректный тип");
         }
 
-        public override LotteryTicket DeserializeLotteryTicket(string jsonContent, LotteryParticipant participant)
-        {
+    
+
+    public override LotteryTicket DeserializeLotteryTicket(string jsonContent, LotteryParticipant participant)
+    {
+        if (string.IsNullOrEmpty(jsonContent)) return null;
+            try
+            {
+                var serializer = new XmlSerializer(typeof(TicketDTO));
+                using (var reader = new StringReader(jsonContent))
+                {
+                    var dto = (TicketDTO)serializer.Deserialize(reader);
+                    var ticket = new LotteryTicket(
+                        int.Parse(dto.TicketID),
+                        dto.TicketLen,
+                        dto.Price,
+                        dto.LotteryName,
+                        participant
+                    );
+
+                    participant?.AddTicket(ticket);
+                    return ticket;
+                }
+            }
+            catch
+            {
+                return null;
+            }
             throw new NotImplementedException();
-        }
+    }
 
         public override string SerializeLottery(LotteryEvent e)
         {
@@ -145,17 +230,51 @@ namespace Model.Data
                     LotteryName = ticket.LotteryName
                 });
             }
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
 
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
+            string fullPath = Path.Combine(folderPath, $"Participant_{participant.Initials}_{unixTimestampSeconds}.xml");
 
-
-            return "";
-
+            XMLSerializer(dto, fullPath);
+            return fullPath;
         }
-
-        public override JArray SerializeLotteryTicket<T>(T ticket_s)
+        public override T2 SerializeLotteryTicket<T1, T2>(T1 ticket_s)
         {
-            throw new NotImplementedException();
+            if (ticket_s == null || !(ticket_s is LotteryTicket lotteryTicket))
+                return default(T2);
+
+            var dto = new TicketDTO
+            {
+                TicketID = lotteryTicket.TicketID,
+                TicketLen = lotteryTicket.TicketLen,
+                Price = lotteryTicket.Price,
+                LotteryName = lotteryTicket.LotteryName
+            };
+
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            string fullPath = Path.Combine(folderPath, $"Ticket_{lotteryTicket.TicketID}_{unixTimestampSeconds}.xml");
+            XMLSerializer(dto, fullPath);
+            if (typeof(T2) == typeof(string))
+            {
+                return (T2)(object)fullPath;
+            }
+
+            return default;
+
         }
+
+
     }
+
+        
 }

@@ -12,7 +12,7 @@ namespace Model.Data
     {
         public abstract string SerializeLottery(LotteryEvent e);
         public abstract string SerializeLotteryParticipant(LotteryParticipant participant);
-        public abstract JArray SerializeLotteryTicket<T>(T ticket_s);
+        public abstract T2 SerializeLotteryTicket<T1, T2>(T1 ticket_s);
 
         public abstract LotteryEvent DeserializeLottery(string fileName);
         public abstract LotteryParticipant DeserializeLotteryParticipant<T>(T obj);
