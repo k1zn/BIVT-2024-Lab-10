@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Model;
 using Model.Data;
+using Model.Core;
 namespace Lab_10
 {
     public partial class LotteryCreate : MyForm

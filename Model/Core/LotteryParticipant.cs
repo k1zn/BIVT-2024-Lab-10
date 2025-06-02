@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
+namespace Model.Core
 {
     public partial class LotteryParticipant : Person
     {
@@ -24,6 +24,20 @@ namespace Model
             get
             {
                 return _tickets;
+            }
+        }
+
+        public decimal MoneySpentOnTickets
+        {
+            get
+            {
+                decimal ans = 0;
+                foreach (LotteryTicket ticket in Tickets)
+                {
+                    if (ticket == null) continue;
+                    ans += ticket.Price;
+                }
+                return ans;
             }
         }
 

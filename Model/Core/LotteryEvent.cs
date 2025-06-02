@@ -1,7 +1,7 @@
 ﻿using Model.Data;
 using Newtonsoft.Json.Linq;
 
-namespace Model
+namespace Model.Core
 {
     public partial class LotteryEvent
     {
@@ -81,7 +81,7 @@ namespace Model
                     _winnerTicket = ticket;
                     break;
                 }
-            } 
+            }
         }
 
         public int GetFutureTicketID()
@@ -138,9 +138,9 @@ namespace Model
                     Array.Resize(ref _lotteryParticipants, _lotteryParticipants.Length + 1);
                     _lotteryParticipants[_lotteryParticipants.Length - 1] = participant;
                 }
-                    
+
             }
-            
+
             _lotteryParticipants = _lotteryParticipants.Where(r => r != null)
                 .OrderByDescending(participant => participant.Greed).ToArray();
             foreach (var participant in _lotteryParticipants)
@@ -160,45 +160,8 @@ namespace Model
                     _tickets[_tickets.Length - 1] = ticket;
                 }
             }
-            
-            
+
+
         }
-
-        public LotteryTicket GetWinner()
-        {
-            if (_isWinnerExist) return _winnerTicket;
-
-
-            _tickets = _tickets.Where(t => t != null).ToArray();
-            if (_tickets.Length == 0)
-            {
-                return null;
-            }
-
-            var rand = new Random();
-            _isWinnerExist = true;
-
-            var i = rand.Next(_tickets.Length);
-            var winner = _tickets[i];
-            if (winner == null)
-            {
-                throw new Exception($"Error! {_tickets.Length} {i}");
-            }
-            _winnerTicket = winner;
-
-            var winnerParticipant = winner.Participant;
-            _winnerParticipant = winnerParticipant;
-            winnerParticipant.AddBalance(PrizeFund, this);
-
-            var serializer = new LotteryArchiveJSONSerializer();
-            serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
-            serializer.SelectFile($"Participant_{winnerParticipant.Initials}_{winnerParticipant.GetPassportInfo("admin")}");
-            serializer.SerializeLotteryParticipant(winnerParticipant);
-
-            
-
-            return winner;
-        }
-
     }
 }
