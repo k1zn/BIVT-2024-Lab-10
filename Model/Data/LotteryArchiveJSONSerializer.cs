@@ -26,7 +26,7 @@ namespace Model.Data
 
         public override string SerializeLottery(LotteryEvent e)
         {
-            if (e == null) return "";
+            if (e == null || string.IsNullOrWhiteSpace(FilePath)) return "";
 
             var winnerTicket = e.GetWinner();
 
@@ -59,7 +59,7 @@ namespace Model.Data
 
         public override string SerializeLotteryParticipant(LotteryParticipant participant)
         {
-            if (participant == null) return "";
+            if (participant == null || string.IsNullOrWhiteSpace(FilePath)) return "";
 
             var jsonObj = JObject.FromObject(participant);
             jsonObj["Tickets"] = SerializeLotteryTicket<LotteryTicket[]>(participant.Tickets);
@@ -103,6 +103,8 @@ namespace Model.Data
 
         public override LotteryEvent DeserializeLottery(string fileName)
         {
+            if (string.IsNullOrWhiteSpace(FilePath)) return null;
+
             string fullPath = FilePath; // SelectFolder + SelectFile
             if (!File.Exists(fullPath)) return null;
 
@@ -144,6 +146,8 @@ namespace Model.Data
 
             if (source == null)
             {
+                if (string.IsNullOrWhiteSpace(FilePath)) return null;
+
                 string fullPath = FilePath; // SelectFolder + SelectFile
                 if (!File.Exists(fullPath)) return null;
 
