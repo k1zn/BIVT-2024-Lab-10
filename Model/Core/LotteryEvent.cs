@@ -130,7 +130,7 @@ namespace Model
             foreach (var file in files)
             {
                 var serializer = new LotteryArchiveJSONSerializer();
-                var participant = serializer.DeserializeLotteryParticipant(Path.GetFileName(file));
+                var participant = serializer.DeserializeLotteryParticipant<string>(Path.GetFileName(file));
                 if (participant != null)
                 {
                     Array.Resize(ref _lotteryParticipants, _lotteryParticipants.Length + 1);

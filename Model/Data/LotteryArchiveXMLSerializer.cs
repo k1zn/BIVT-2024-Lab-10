@@ -11,30 +11,12 @@ namespace Model.Data
     {
         public override string Extension => "xml";
 
-        public override string SerializeLottery(LotteryEvent e)
-        {
-            return "";
-        }
-        public override string SerializeLotteryParticipant(LotteryParticipant participant)
-        {
-            return "";
-        }
-
         public override LotteryEvent DeserializeLottery(string fileName)
         {
             throw new NotImplementedException();
         }
-        public override LotteryParticipant DeserializeLotteryParticipant(string fileName)
-        {
-            throw new NotImplementedException();
-        }
 
-        public override JArray SerializeLotteryTicket(LotteryTicket ticket)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override JArray SerializeLotteryTicket(LotteryTicket[] tickets)
+        public override LotteryParticipant DeserializeLotteryParticipant<T>(T obj)
         {
             throw new NotImplementedException();
         }
@@ -44,7 +26,17 @@ namespace Model.Data
             throw new NotImplementedException();
         }
 
-        public override LotteryParticipant DeserializeLotteryParticipant(JObject json)
+        public override string SerializeLottery(LotteryEvent e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string SerializeLotteryParticipant(LotteryParticipant participant)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override JArray SerializeLotteryTicket<T>(T ticket_s)
         {
             throw new NotImplementedException();
         }

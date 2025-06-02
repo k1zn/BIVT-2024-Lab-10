@@ -68,7 +68,7 @@ namespace Model.Data
             if (participant == null) return "";
 
             var jsonObj = JObject.FromObject(participant);
-            jsonObj["Tickets"] = SerializeLotteryTicket(participant.Tickets);
+            jsonObj["Tickets"] = SerializeLotteryTicket<LotteryTicket[]>(participant.Tickets);
             jsonObj["PassportInfo"] = participant.GetPassportInfo("admin");
 
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -81,26 +81,28 @@ namespace Model.Data
             return fullPath;
         }
 
-        public override JArray SerializeLotteryTicket(LotteryTicket ticket)
-        {
-            if (ticket == null) return new JArray();
-
-            JObject jsonObj = JObject.FromObject(ticket);
-
-            return new JArray(jsonObj);
-        }
-
-        public override JArray SerializeLotteryTicket(LotteryTicket[] tickets)
+        public override JArray SerializeLotteryTicket<T>(T tickets)
         {
             var jArray = new JArray();
-            if (tickets == null) return jArray;
-            
-            foreach (LotteryTicket ticket in tickets)
-            {
-                if (ticket == null) continue;
 
-                JObject jsonObj = JObject.FromObject(ticket);
-                jArray.Add(jsonObj);
+            if (tickets == null)
+                return jArray;
+
+            if (tickets is LotteryTicket singleTicket)
+            {
+                jArray.Add(JObject.FromObject(singleTicket));
+            }
+            else if (tickets is LotteryTicket[] ticketArray)
+            {
+                foreach (var ticket in ticketArray)
+                {
+                    if (ticket == null) continue;
+                    jArray.Add(JObject.FromObject(ticket));
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Unsupported type for serialization", nameof(tickets));
             }
 
             return jArray;
@@ -143,45 +145,72 @@ namespace Model.Data
             var prizeFund = Convert.ToInt32(jsonObj["PrizeFund"]);
             var eventName = Convert.ToString(jsonObj["EventName"]);
             var ticketPrice = Convert.ToInt32(jsonObj["TicketPrice"]);
-            var winner = this.DeserializeLotteryParticipant((JObject)jsonObj["WinnerParticipant"]); 
+            var winner = this.DeserializeLotteryParticipant<JObject>((JObject)jsonObj["WinnerParticipant"]); 
 
             var lottery = new LotteryEvent(eventName, numberOfTickets, numberOfParticipants, prizeFund, ticketPrice, winner);
 
             return lottery;
 
         }
-        public override LotteryParticipant DeserializeLotteryParticipant(string fileName)
+        public override LotteryParticipant DeserializeLotteryParticipant<T>(T source)
         {
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            string fullPath = Path.Combine(folderPath, fileName); // fileName == "example.json"
-            if (!File.Exists(fullPath)) return null;
-
             JObject jsonObj = null;
-            bool success = false;
 
-            var content = File.ReadAllText(fullPath);
-
-            try
+            if (source is string fileName)
             {
-                using (var jsonTextReader = new JsonTextReader(new StringReader(content)))
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                string fullPath = Path.Combine(folderPath, fileName);
+                if (!File.Exists(fullPath)) return null;
+
+                try
                 {
-                    jsonObj = JObject.Load(jsonTextReader);
-                    success = true;
+                    var content = File.ReadAllText(fullPath);
+                    jsonObj = JObject.Parse(content);
+                }
+                catch
+                {
+                    return null;
                 }
             }
-            catch (Exception)
+            else if (source is JObject jObj)
             {
-                return null;
+                jsonObj = jObj;
+            }
+            else
+            {
+                throw new ArgumentException($"Unsupported source type: {typeof(T).Name}");
             }
 
-            if (!success || jsonObj == null) return null;
+            if (jsonObj == null) return null;
 
-            return this.DeserializeLotteryParticipant(jsonObj);
+            var initials = Convert.ToString(jsonObj["Initials"]);
+            var initialsSplit = initials.Split(" ");
+            var age = Convert.ToInt32(jsonObj["Age"]);
+            var balance = Convert.ToInt32(jsonObj["Balance"]);
+            var greed = Convert.ToInt32(jsonObj["Greed"]);
+            var passportInfo = Convert.ToString(jsonObj["PassportInfo"]);
+
+            var participant = new LotteryParticipant(
+                initialsSplit[0],
+                initialsSplit.Length > 1 ? initialsSplit[1] : "",
+                age,
+                balance,
+                passportInfo,
+                greed
+            );
+
+            if (jsonObj["Tickets"] is JArray ticketsJArray)
+            {
+                foreach (JObject ticketJson in ticketsJArray)
+                {
+                    participant.AddTicket(DeserializeLotteryTicket(ticketJson.ToString(), participant));
+                }
+            }
+
+            return participant;
         }
 
         public override LotteryTicket DeserializeLotteryTicket(string jsonContent, LotteryParticipant participant)
@@ -208,32 +237,6 @@ namespace Model.Data
             var lotteryName = Convert.ToString(jsonObj["LotteryName"]);
 
             return new LotteryTicket(ticketId, ticketLen, price, lotteryName, participant);
-        }
-
-        public override LotteryParticipant DeserializeLotteryParticipant(JObject jsonObj)
-        {
-            var initials = Convert.ToString(jsonObj["Initials"]);
-            var initialsSplit = initials.Split(" ");
-            var age = Convert.ToInt32(jsonObj["Age"]);
-            var balance = Convert.ToInt32(jsonObj["Balance"]);
-            var greed = Convert.ToInt32(jsonObj["Greed"]);
-            var passportInfo = Convert.ToString(jsonObj["PassportInfo"]);
-            var participant = new LotteryParticipant(initialsSplit[0], initialsSplit[1], age, balance, passportInfo, greed);
-
-            if (jsonObj["Tickets"] != null)
-            {
-                var ticketsJArray = (JArray)jsonObj["Tickets"];
-                if (ticketsJArray != null)
-                {
-                    foreach (JObject ticketJson in ticketsJArray)
-                    {
-                        participant.AddTicket(DeserializeLotteryTicket(ticketJson.ToString(), participant));
-                    }
-                }
-
-            }
-
-            return participant;
         }
     }
 }
