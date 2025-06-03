@@ -106,13 +106,24 @@ namespace Lab_10
             tableLayoutPanel1.RowCount++;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
+            var ticketID = jsonObj["TicketID"].ToString();
+            var winner = jsonObj["Winner"].ToString();
+            var timestamp = jsonObj["Timestamp"].ToString();
+            if (ticketID == "-1")
+            {
+                winner = "отсутствует";
+                ticketID = "отменена";
+                timestamp = "-";
+            }
+                
+
             AddNewLabel(jsonObj["EventName"].ToString(), tableLayoutPanel1);
             AddNewLabel(jsonObj["NumberOfParticipants"].ToString(), tableLayoutPanel1);
             AddNewLabel(jsonObj["NumberOfTickets"].ToString(), tableLayoutPanel1);
             AddNewLabel(jsonObj["PrizeFund"].ToString(), tableLayoutPanel1);
-            AddNewLabel(jsonObj["Winner"].ToString(), tableLayoutPanel1);
-            AddNewLabel(jsonObj["TicketID"].ToString(), tableLayoutPanel1);
-            AddNewLabel(jsonObj["Timestamp"].ToString(), tableLayoutPanel1);
+            AddNewLabel(winner, tableLayoutPanel1);
+            AddNewLabel(ticketID, tableLayoutPanel1);
+            AddNewLabel(timestamp, tableLayoutPanel1);
         }
 
         private void ShowAllInfo(bool buttonCaller)

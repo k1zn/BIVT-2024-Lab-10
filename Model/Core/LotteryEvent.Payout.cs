@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,10 +43,8 @@ namespace Model.Core
                 winnerParticipant = winner.Participant;
                 _winnerParticipant = winnerParticipant;
                 winnerParticipant.AddBalance(PrizeFund, this);
-                var serializer = new LotteryArchiveJSONSerializer();
-                serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
-                serializer.SelectFile($"Participant_{winnerParticipant.FullName}_{winnerParticipant.GetPassportInfo("admin")}");
-                serializer.SerializeLotteryParticipant(winnerParticipant);
+
+                winnerParticipant.Save();
 
                 return winner;
             }

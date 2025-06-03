@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,10 @@ namespace Model.Core
         public void AddBalance(decimal balance, LotteryEvent lottery)
         {
             if (lottery.WinnerParticipant == this)
+            {
                 Balance += balance;
+                this.Save();
+            }
         }
 
         public void RefundMoney(LotteryEvent lottery)
@@ -26,6 +30,7 @@ namespace Model.Core
                 if (ticket.LotteryName == lottery.EventName)
                 {
                     Balance += (decimal)0.9 * ticket.Price;
+                    this.Save();
                 } else
                 {
                     Array.Resize(ref newTickets, newTickets.Length + 1);

@@ -1,4 +1,5 @@
 ﻿using Model.Core;
+using Model.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,6 +75,15 @@ namespace Model.Core
 
             Array.Resize(ref _tickets, _tickets.Length + 1);
             _tickets[^1] = ticket;
+        }
+
+        public void Save()
+        {
+            var serializer = new LotteryArchiveJSONSerializer();
+            serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
+            serializer.SelectFile($"Participant_{this.FullName}_{this.GetPassportInfo("admin")}");
+
+            serializer.SerializeLotteryParticipant(this);
         }
 
     }

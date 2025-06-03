@@ -243,10 +243,7 @@ namespace Lab_10
                     }
                 }
 
-                var serializer = new LotteryArchiveJSONSerializer();
-                serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
-                serializer.SelectFile($"Participant_{participant.FullName}_{participant.GetPassportInfo("admin")}");
-                serializer.SerializeLotteryParticipant(participant);
+                participant.Save();
             }
             if (showMsgBox)
             {

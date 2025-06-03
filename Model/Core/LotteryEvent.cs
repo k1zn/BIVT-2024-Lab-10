@@ -141,8 +141,6 @@ namespace Model.Core
             _lotteryParticipants = _lotteryParticipants.Where(r => r != null)
                 .OrderByDescending(participant => participant.Greed).ToArray();
 
-            LotteryParticipant[] lotteryParticipantsClone = (LotteryParticipant[])_lotteryParticipants.Clone();
-
             while (this._tickets.Length <= this.NumberOfTickets)
             {
                 bool canAnyParticipantBuyTicket = false;
