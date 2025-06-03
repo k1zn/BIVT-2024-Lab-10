@@ -41,6 +41,20 @@ namespace Model.Core
             }
         }
 
+        public decimal MoneyWinOnTickets
+        {
+            get
+            {
+                decimal ans = 0;
+                foreach (LotteryTicket ticket in Tickets)
+                {
+                    if (ticket == null) continue;
+                    if (ticket.WinTicket) ans += ticket.Price;
+                }
+                return ans;
+            }
+        }
+
         public LotteryTicket AddTicket(LotteryEvent lottery)
         {
             if (lottery.TicketPrice <= Balance)
@@ -52,8 +66,6 @@ namespace Model.Core
                 return ticket;
             }
             else return null;
-
-            
         }
 
         public void AddTicket(LotteryTicket ticket)
@@ -62,12 +74,6 @@ namespace Model.Core
 
             Array.Resize(ref _tickets, _tickets.Length + 1);
             _tickets[^1] = ticket;
-        }
-
-        public string GetPathToSerialized(string authKey)
-        {
-            if (authKey != "admin") return "";
-            return Path.Combine(Directory.GetCurrentDirectory(), "Participants", $"Participant_{this.FullName}_{this.GetPassportInfo(authKey)}.json");
         }
 
     }

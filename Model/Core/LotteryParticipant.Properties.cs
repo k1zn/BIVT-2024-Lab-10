@@ -17,5 +17,25 @@ namespace Model.Core
                 Balance += balance;
         }
 
+        public void RefundMoney(LotteryEvent lottery)
+        {
+            LotteryTicket[] newTickets = new LotteryTicket[0];
+            foreach (LotteryTicket ticket in _tickets)
+            {
+                if (ticket == null) continue;
+                if (ticket.LotteryName == lottery.EventName)
+                {
+                    Balance += (decimal)0.9 * ticket.Price;
+                } else
+                {
+                    Array.Resize(ref newTickets, newTickets.Length + 1);
+                    newTickets[^1] = ticket;
+                }
+            }
+
+            if (newTickets.Length != 0)
+                _tickets = newTickets;
+        }
+
     }
 }

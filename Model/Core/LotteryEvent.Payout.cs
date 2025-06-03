@@ -63,9 +63,7 @@ namespace Model.Core
             foreach (LotteryParticipant p in this._lotteryParticipants)
             {
                 if (p == null) continue;
-                //p.AddBalance...
-                // добавлять 90% от денег потраченных именно на ЭТУ лотерею
-                // перед этим исправить логику жадности
+                p.RefundMoney(this);
             }
 
             return ticket;
