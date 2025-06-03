@@ -52,6 +52,12 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(614, 412);
             dataGridView1.TabIndex = 0;
+
+            dataGridView1.Columns.Add("Name", "Имя");
+            dataGridView1.Columns.Add("Surname", "Фамилия");
+            dataGridView1.Columns.Add("Age", "Возраст");
+            dataGridView1.Columns.Add("Balance", "Баланс");
+            dataGridView1.Columns.Add("Greed", "Жадность");
             // 
             // button1
             // 

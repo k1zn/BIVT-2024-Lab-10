@@ -98,8 +98,10 @@ namespace Lab_10
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             var serializer = new LotteryArchiveJSONSerializer();
-            serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "JSON"));
+            serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Lotteries"));
             serializer.SelectFile($"{Lottery.EventName}_{unixTimestampSeconds}");
+
+            serializer.SerializeLottery(Lottery);
 
             LotteryCreated?.Invoke(this, new MyForm.LotteryPathEventArgs { LotteryPath = serializer.FilePath });
 

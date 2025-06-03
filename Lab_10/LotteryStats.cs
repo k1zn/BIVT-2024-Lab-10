@@ -81,6 +81,8 @@ namespace Lab_10
 
             if (string.IsNullOrWhiteSpace(content))
             {
+                if (this.IsHandleCreated)
+                    ShowMsgBox($"Лотерея {Path.GetFileNameWithoutExtension(filePath)} не будет отображена - файл пуст", true);
                 return;
             }
 
@@ -115,7 +117,7 @@ namespace Lab_10
 
         private void ShowAllInfo(bool buttonCaller)
         {
-            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "JSON");
+            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Lotteries");
 
             if (!Directory.Exists(directoryPath))
             {

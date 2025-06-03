@@ -18,6 +18,20 @@ namespace Lab_10
 {
     public partial class ParticipantsTable : MyForm
     {
+        private class ParticipantHiddenData
+        {
+            private LotteryTicket[] _tickets;
+            public LotteryTicket[] Tickets { get { return _tickets; } }
+
+            public string PassportInfo { get; private set; }
+
+            public ParticipantHiddenData(LotteryTicket[] tickets, string passportInfo)
+            {
+                _tickets = tickets;
+                PassportInfo = passportInfo;
+            }
+        }
+
         private bool dataChanged = false;
         private string[] RandomNames = new string[] { "Максим", "Роберт", "Николай", "Михаил", "Эмин", "Алексей", "Артём", "Тимур", "Роман", "Сергей", "Леонид", "Иван", "Арсений", "Дмитрий", "Данил", "Глеб", "Фёдор", "Егор", "Демид", "Марк", "Александр", "Владимир", "Даниил", "Никита", "Константин", "Руслан", "Лев", "Григорий", "Пётр", "Ярослав", "Дамир", "Илья", "Георгий", "Захар", "Владислав", "Юрий", "Лука", "Денис", "Богдан", "Гордей", "Кирилл", "Степан", "Святослав", "Вадим", "Матвей", "Виктор", "Камиль", "Василий", "Павел", "Даниэль", "Андрей", "Артур", "Семён", "Платон", "Артемий", "Виталий", "Елисей", "Антон", "Тимофей", "Филипп", "Рустам", "Альберт", "Тихон", "Данила", "Родион", "Али", "Мирослав", "Евгений", "Давид", "Савелий", "Игорь", "Назар", "Валерий", "Олег", "Всеволод", "Арсен", "Макар", "Савва", "Адам", "Карим", "Вячеслав", "Станислав", "Эрик", "Мирон", "Герман", "Ян", "Марсель", "Анатолий", "Борис", "Ибрагим", "Леон", "Ростислав", "Серафим", "Демьян", "Яков", "Марат", "Аркадий", "Эмир", "Тигран", "Рафаэль", "Кира", "Анна", "Злата", "Евгения", "Софья", "Дарья", "Дарина", "Вероника", "Мария", "Аделина", "Анастасия", "Алиса", "Вера", "Виктория", "Сафия", "Варвара", "Полина", "Ева", "Арина", "Валерия", "Ульяна", "Малика", "Ариана", "Мирослава", "Есения", "Адель", "Василиса", "Элина", "София", "Кристина", "Александра", "Таисия", "Амалия", "Ирина", "Елизавета", "Аврора", "Мила", "Эмилия", "Агата", "Стефания", "Ангелина", "Екатерина", "Амина", "Милана", "Ксения", "Яна", "Лилия", "Елена", "Аяна", "Амелия", "Ника", "Маргарита", "Майя", "Алина", "Мира", "Алёна", "Марина", "Пелагея", "Юлия", "Камилла", "Ольга", "Алия", "Камила", "Марьям", "Любовь", "Татьяна", "Валентина", "Николь", "Светлана", "Ясмина", "Владислава", "Сабина", "Марьяна", "Антонина", "Лада", "Василина", "Лия", "Агния", "Мелания", "Айлин", "Мия", "Диана", "Ярослава", "Надежда", "Оливия", "Амира", "Наталья", "Фатима", "Алисия", "Эвелина", "Олеся", "Аиша", "Лидия", "Марианна", "Теона", "Альфия", "Медина", "Асия", "Лиана", "Зоя" };
         string[] RandomSurnames = new string[]
@@ -31,20 +45,25 @@ namespace Lab_10
         {
             InitializeComponent();
 
+            LotteryCreate.LotteryCreated += HandleNewLottery;
+
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             button3.Enabled = false;
-
-            dataGridView1.Columns.Add("Name", "Имя");
-            dataGridView1.Columns.Add("Surname", "Фамилия");
-            dataGridView1.Columns.Add("Age", "Возраст");
-            dataGridView1.Columns.Add("Balance", "Баланс");
-            dataGridView1.Columns.Add("Greed", "Жадность");
 
             dataGridView1.RowsAdded += DataGridView1_RowsChanged;
             dataGridView1.RowsRemoved += DataGridView1_RowsChanged;
 
             dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
+
+            UpdateDataGridView();
+
+        }
+
+        private void UpdateDataGridView()
+        {
+            if (!(dataGridView1.Rows.Count == 0 || dataGridView1.Rows.Count == 1 && dataGridView1.Rows[0].IsNewRow))
+                dataGridView1.Rows.Clear();
 
             var serializer = new LotteryArchiveJSONSerializer();
             serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
@@ -69,21 +88,11 @@ namespace Lab_10
 
                 dataGridView1.Rows.Add(row);
             }
-
         }
 
-        private class ParticipantHiddenData
+        private void HandleNewLottery(object sender, MyForm.LotteryPathEventArgs e)
         {
-            private LotteryTicket[] _tickets;
-            public LotteryTicket[] Tickets { get { return _tickets; } }
-
-            public string PassportInfo { get; private set; }
-
-            public ParticipantHiddenData(LotteryTicket[] tickets, string passportInfo)
-            {
-                _tickets = tickets;
-                PassportInfo = passportInfo;
-            }
+            UpdateDataGridView();
         }
 
         private void addParticipants(int cnt)
@@ -127,6 +136,7 @@ namespace Lab_10
                 if (result == DialogResult.Yes)
                 {
                     saveTable(false);
+                    LotteryCreate.LotteryCreated -= HandleNewLottery;
                     return;
                 }
                 else if (result == DialogResult.Cancel)
@@ -134,9 +144,12 @@ namespace Lab_10
                     e.Cancel = true;
                     return;
                 }
+            } else
+            {
+                LotteryCreate.LotteryCreated -= HandleNewLottery;
             }
 
-            base.OnFormClosing(e);
+                base.OnFormClosing(e);
         }
 
         private void DataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)

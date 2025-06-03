@@ -37,6 +37,7 @@ namespace Model.Core
                     throw new Exception($"Error! {_tickets.Length} {i}");
                 }
                 _winnerTicket = winner;
+                _winnerTicket.SetWinStatus(this);
 
                 winnerParticipant = winner.Participant;
                 _winnerParticipant = winnerParticipant;

@@ -28,6 +28,11 @@ namespace Model.Core
             get; private set;
         }
 
+        public bool WinTicket
+        {
+            get; private set;
+        }
+
         public int TicketLen
         {
             get
@@ -44,6 +49,13 @@ namespace Model.Core
             }
         }
 
+        public void SetWinStatus(LotteryEvent lottery)
+        {
+            if (this == lottery.WinnerTicket)
+            {
+                WinTicket = true;
+            }
+        }
 
         public LotteryTicket(LotteryEvent lottery, LotteryParticipant participant)
         {

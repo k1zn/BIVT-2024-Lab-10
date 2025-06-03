@@ -116,12 +116,11 @@ namespace Model.Core
         public void FillRandom()
         {
             var rand = new Random();
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-            var files = Directory.GetFiles(path);
+
+            var serializer = new LotteryArchiveJSONSerializer();
+            serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
+
+            var files = Directory.GetFiles(serializer.FolderPath);
             if (files.Length == 0) return;
             if (files.Length > NumberOfParticipants)
             {
@@ -129,8 +128,6 @@ namespace Model.Core
             }
             foreach (var file in files)
             {
-                var serializer = new LotteryArchiveJSONSerializer();
-                serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
                 serializer.SelectFile(Path.GetFileNameWithoutExtension(file));
                 var participant = serializer.DeserializeLotteryParticipant<object>();
                 if (participant != null)
@@ -143,25 +140,31 @@ namespace Model.Core
 
             _lotteryParticipants = _lotteryParticipants.Where(r => r != null)
                 .OrderByDescending(participant => participant.Greed).ToArray();
-            foreach (var participant in _lotteryParticipants)
+
+            LotteryParticipant[] lotteryParticipantsClone = (LotteryParticipant[])_lotteryParticipants.Clone();
+
+            while (this._tickets.Length <= this.NumberOfTickets)
             {
-                var ticket = participant.AddTicket(this);
-                if (ticket != null)
+                bool canAnyParticipantBuyTicket = false;
+
+                foreach (var participant in _lotteryParticipants)
                 {
-                    var serializer = new LotteryArchiveJSONSerializer();
-                    serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
-                    serializer.SelectFile($"Participant_{participant.FullName}_{participant.GetPassportInfo("admin")}");
-                    serializer.SerializeLotteryParticipant(participant);
-                    //File.WriteAllText(pathToParticipant, JObject.FromObject(participant).ToString());
+                    if (this._tickets.Length >= this.NumberOfTickets) break;
+
+                    var ticket = participant.AddTicket(this);
+                    if (ticket != null)
+                    {
+                        canAnyParticipantBuyTicket = true;
+                        serializer.SelectFile($"Participant_{participant.FullName}_{participant.GetPassportInfo("admin")}");
+                        serializer.SerializeLotteryParticipant(participant);
+
+                        Array.Resize(ref _tickets, _tickets.Length + 1);
+                        _tickets[_tickets.Length - 1] = ticket;
+                    }
                 }
-                if (ticket != null)
-                {
-                    Array.Resize(ref _tickets, _tickets.Length + 1);
-                    _tickets[_tickets.Length - 1] = ticket;
-                }
+
+                if (!canAnyParticipantBuyTicket) break;
             }
-
-
         }
     }
 }
