@@ -8,7 +8,7 @@ namespace Model.Core
 {
     public interface IPerson
     {
-        string Initials { get; }
+        string FullName { get; }
 
         int UserID { get; }
 

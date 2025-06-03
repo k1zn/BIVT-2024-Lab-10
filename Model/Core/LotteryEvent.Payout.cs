@@ -43,7 +43,7 @@ namespace Model.Core
                 winnerParticipant.AddBalance(PrizeFund, this);
                 var serializer = new LotteryArchiveJSONSerializer();
                 serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
-                serializer.SelectFile($"Participant_{winnerParticipant.Initials}_{winnerParticipant.GetPassportInfo("admin")}");
+                serializer.SelectFile($"Participant_{winnerParticipant.FullName}_{winnerParticipant.GetPassportInfo("admin")}");
                 serializer.SerializeLotteryParticipant(winnerParticipant);
 
                 return winner;

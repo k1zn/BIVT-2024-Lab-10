@@ -150,7 +150,7 @@ namespace Model.Core
                 {
                     var serializer = new LotteryArchiveJSONSerializer();
                     serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
-                    serializer.SelectFile($"Participant_{participant.Initials}_{participant.GetPassportInfo("admin")}");
+                    serializer.SelectFile($"Participant_{participant.FullName}_{participant.GetPassportInfo("admin")}");
                     serializer.SerializeLotteryParticipant(participant);
                     //File.WriteAllText(pathToParticipant, JObject.FromObject(participant).ToString());
                 }

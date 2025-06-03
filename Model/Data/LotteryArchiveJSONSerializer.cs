@@ -31,24 +31,24 @@ namespace Model.Data
 
             var winnerTicket = e.GetWinner();
 
-            string initials;
+            string FullName;
             string winnerTicketID;
 
             if (winnerTicket == null)
             {
-                initials = "-";
+                FullName = "-";
                 winnerTicketID = "-";
 
             } else
             {
-                initials = winnerTicket.Participant.Initials;
+                FullName = winnerTicket.Participant.FullName;
                 winnerTicketID = winnerTicket.TicketID;
             }
                
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             var jsonObj = JObject.FromObject(e);
-            jsonObj["Winner"] = initials;
+            jsonObj["Winner"] = FullName;
             jsonObj["TicketID"] = winnerTicketID;
             jsonObj["Timestamp"] = getRussiaDateTime(unixTimestampSeconds);
 
@@ -63,7 +63,7 @@ namespace Model.Data
             if (participant == null || string.IsNullOrWhiteSpace(FilePath)) return "";
 
             var jsonObj = JObject.FromObject(participant);
-            jsonObj["Tickets"] = SerializeLotteryTicket<LotteryTicket[]>(participant.Tickets);
+            jsonObj["Tickets"] = SerializeLotteryTicket<LotteryTicket[], JArray>(participant.Tickets);
             jsonObj["PassportInfo"] = participant.GetPassportInfo("admin");
 
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -74,12 +74,14 @@ namespace Model.Data
             return fullPath;
         }
 
-        public override JArray SerializeLotteryTicket<T>(T tickets)
+        public override T2 SerializeLotteryTicket<T1, T2>(T1 tickets)
         {
+            if (typeof(T2) != typeof(JArray)) return default;
+
             var jArray = new JArray();
 
             if (tickets == null)
-                return jArray;
+                return (T2)(object)jArray;
 
             if (tickets is LotteryTicket singleTicket)
             {
@@ -98,7 +100,7 @@ namespace Model.Data
                 throw new ArgumentException("Unsupported type for serialization", nameof(tickets));
             }
 
-            return jArray;
+            return (T2)(object)jArray;
         }
 
 
@@ -173,16 +175,16 @@ namespace Model.Data
 
             if (jsonObj == null) return null;
 
-            var initials = Convert.ToString(jsonObj["Initials"]);
-            var initialsSplit = initials.Split(" ");
+            var FullName = Convert.ToString(jsonObj["FullName"]);
+            var FullNameSplit = FullName.Split(" ");
             var age = Convert.ToInt32(jsonObj["Age"]);
             var balance = Convert.ToInt32(jsonObj["Balance"]);
             var greed = Convert.ToInt32(jsonObj["Greed"]);
             var passportInfo = Convert.ToString(jsonObj["PassportInfo"]);
 
             var participant = new LotteryParticipant(
-                initialsSplit[0],
-                initialsSplit.Length > 1 ? initialsSplit[1] : "",
+                FullNameSplit[0],
+                FullNameSplit.Length > 1 ? FullNameSplit[1] : "",
                 age,
                 balance,
                 passportInfo,

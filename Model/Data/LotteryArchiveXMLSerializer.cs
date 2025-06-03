@@ -56,7 +56,7 @@ namespace Model.Data
 
         public class ParticipantDTO
         {
-            public string Initials { get; set; }
+            public string FullName { get; set; }
             public int Age { get; set; }
             public decimal Balance { get; set; }
             public int Greed { get; set; }
@@ -105,8 +105,8 @@ namespace Model.Data
                 {
                     var dto = XMLDeserialize<ParticipantDTO>(fullPath);
                     var participant = new LotteryParticipant(
-                        dto.Initials,
-                        dto.Initials,
+                        dto.FullName,
+                        dto.FullName,
                         dto.Age,
                         dto.Balance,
                         dto.PassportInfo,
@@ -167,18 +167,18 @@ namespace Model.Data
         {
             if (e == null) return "";
             var winnerTicket = e.WinnerTicket;
-            string initials;
+            string FullName;
             string winnerTicketID;
 
             if (winnerTicket == null)
             {
-                initials = "-";
+                FullName = "-";
                 winnerTicketID = "-";
 
             }
             else
             {
-                initials = winnerTicket.Participant.Initials;
+                FullName = winnerTicket.Participant.FullName;
                 winnerTicketID = winnerTicket.TicketID;
             }
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -189,7 +189,7 @@ namespace Model.Data
                 numberOfParticipants = e.NumberOfParticipants,
                 numberOfTickets = e.NumberOfTickets,
                 PrizeFund = e.PrizeFund,
-                Winner = initials,
+                Winner = FullName,
                 ID = winnerTicketID,
                 TicketPrice = e.TicketPrice,
                 TimeStamp = getRussiaDateTime(unixTimestampSeconds)
@@ -211,7 +211,7 @@ namespace Model.Data
             if (participant == null) return "";
             var dto = new ParticipantDTO
             {
-                Initials = participant.Initials,
+                FullName = participant.FullName,
                 Age = participant.Age,
                 Balance = participant.Balance,
                 Greed = participant.Greed,
@@ -238,7 +238,7 @@ namespace Model.Data
             }
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            string fullPath = Path.Combine(folderPath, $"Participant_{participant.Initials}_{unixTimestampSeconds}.xml");
+            string fullPath = Path.Combine(folderPath, $"Participant_{participant.FullName}_{unixTimestampSeconds}.xml");
 
             XMLSerializer(dto, fullPath);
             return fullPath;

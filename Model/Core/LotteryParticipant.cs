@@ -67,7 +67,7 @@ namespace Model.Core
         public string GetPathToSerialized(string authKey)
         {
             if (authKey != "admin") return "";
-            return Path.Combine(Directory.GetCurrentDirectory(), "Participants", $"Participant_{this.Initials}_{this.GetPassportInfo(authKey)}.json");
+            return Path.Combine(Directory.GetCurrentDirectory(), "Participants", $"Participant_{this.FullName}_{this.GetPassportInfo(authKey)}.json");
         }
 
     }

@@ -9,10 +9,17 @@ namespace Model.Core
 {
     public class Person : IPerson
     {
-        public string Initials
+        public string FullName
         {
-            get; private set;
+            get
+            {
+                return Name + " " + Surname;
+            }
         }
+
+        public string Name { get; private set; }
+
+        public string Surname { get; private set; }
 
         public int UserID
         {
@@ -30,7 +37,8 @@ namespace Model.Core
 
         public Person(string name, string surname, string passportInfo, int age)
         {
-            Initials = name + " " + surname;
+            Name = name;
+            Surname = surname;
             UserID = _userIdCounter++;
             Age = age;
 

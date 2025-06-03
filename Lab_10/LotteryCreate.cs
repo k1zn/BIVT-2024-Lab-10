@@ -80,23 +80,22 @@ namespace Lab_10
                 return;
             }
 
-
-
             string lotteryName = textBox1.Text;
+
             var Lottery = new LotteryEvent(lotteryName, countTicket, lotteryParticipantsCount, prizeFund, TicketPrice);
             Lottery.FillRandom();
+
             var winnerTicket = Lottery.GetWinner();
             if (winnerTicket == null)
             {
                 ShowMsgBox("В данной лотерее нет победителей. Возможная причина: у выбранных участников не хватает денег на покупку билета", false);
                 return;
             }
+
             string id = winnerTicket.TicketID;
             var participant = winnerTicket.Participant;
-            string initials = participant.Initials;
+            string fullName = participant.FullName;
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-            //serialize(Lottery, initials, id, unixTimestampSeconds, lotteryName);
 
             var serializer = new LotteryArchiveJSONSerializer();
             serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "JSON"));
@@ -104,7 +103,7 @@ namespace Lab_10
 
             LotteryCreated?.Invoke(this, new MyForm.LotteryPathEventArgs { LotteryPath = serializer.FilePath });
 
-            MessageBox.Show($"Победитель: {initials}{Environment.NewLine}ID выигрышного билета: {id}", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Победитель: {fullName}{Environment.NewLine}ID выигрышного билета: {id}", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private DateTime getRussiaDateTime(long unixTimestampSeconds)
         {

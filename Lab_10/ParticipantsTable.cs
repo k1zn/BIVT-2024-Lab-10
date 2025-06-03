@@ -45,33 +45,44 @@ namespace Lab_10
             dataGridView1.RowsRemoved += DataGridView1_RowsChanged;
 
             dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
-            //dataGridView1.CurrentCellDirtyStateChanged += DataGridView1_CurrentCellDirtyStateChanged; ивент на ячейку, которая была изменена, но еще не был совершен выход из неё. считаю юзлес
 
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
-            if (!Directory.Exists(path))
+            var serializer = new LotteryArchiveJSONSerializer();
+            serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
+            foreach (var file in Directory.GetFiles(serializer.FolderPath))
             {
-                Directory.CreateDirectory(path);
+                serializer.SelectFile(Path.GetFileNameWithoutExtension(file));
+                LotteryParticipant participant = serializer.DeserializeLotteryParticipant<object>();
+                if (participant == null)
+                {
+                    continue;
+                }
+
+                var row = new DataGridViewRow();
+                row.CreateCells(dataGridView1);
+                row.Cells[0].Value = participant.Name;
+                row.Cells[1].Value = participant.Surname;
+                row.Cells[2].Value = participant.Age;
+                row.Cells[3].Value = participant.Balance;
+                row.Cells[4].Value = participant.Greed;
+
+                row.Tag = new ParticipantHiddenData(participant.Tickets, participant.GetPassportInfo("admin"));
+
+                dataGridView1.Rows.Add(row);
             }
-            var files = Directory.GetFiles(path);
-            deserialize(files);
 
         }
 
-
-
-        private void deserialize(string[] files)
+        private class ParticipantHiddenData
         {
-            if (files.Length == 0)
-            {
-                return;
-            }
-            foreach (string file in files)
-            {
-                if (string.IsNullOrEmpty(file)) return;
+            private LotteryTicket[] _tickets;
+            public LotteryTicket[] Tickets { get { return _tickets; } }
 
-                var jsonObj = JObject.Parse(File.ReadAllText(file));
-                var initials = jsonObj["Initials"].ToString().Split(" ");
-                dataGridView1.Rows.Add(initials[0], initials[1].Trim(), jsonObj["Age"], jsonObj["Balance"], jsonObj["Greed"]);
+            public string PassportInfo { get; private set; }
+
+            public ParticipantHiddenData(LotteryTicket[] tickets, string passportInfo)
+            {
+                _tickets = tickets;
+                PassportInfo = passportInfo;
             }
         }
 
@@ -86,7 +97,18 @@ namespace Lab_10
                 var age = rand.Next(18, 46);
                 var balance = rand.Next(100, 1000);
                 var greed = rand.Next(0, 100);
-                dataGridView1.Rows.Add(name, surname, age, balance, greed);
+
+                var row = new DataGridViewRow();
+                row.CreateCells(dataGridView1);
+                row.Cells[0].Value = name;
+                row.Cells[1].Value = surname;
+                row.Cells[2].Value = age;
+                row.Cells[3].Value = balance;
+                row.Cells[4].Value = greed;
+
+                row.Tag = new ParticipantHiddenData(new LotteryTicket[0], getPassportInfo());
+
+                dataGridView1.Rows.Add(row);
             }
             this.Text = "(*) Таблица участников";
             dataChanged = true;
@@ -133,10 +155,10 @@ namespace Lab_10
             saveTable(true);
         }
 
-        private string generateRandomPassportInfo()
+        private string getPassportInfo()
         {
             var rand = new Random();
-            return rand.Next(1, 10000).ToString() + DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+            return rand.Next(1, 10000).ToString() + DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();        
         }
 
         private void saveTable(bool showMsgBox)
@@ -193,23 +215,25 @@ namespace Lab_10
 
                 var name = row.Cells["Name"].Value.ToString();
                 var surname = row.Cells["Surname"].Value.ToString();
-                var participant = new LotteryParticipant(name, surname, age, balance, generateRandomPassportInfo(), greed);
-                //var jsonObj = JObject.FromObject(participant);
-                //string fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}.json");
+                ParticipantHiddenData secret = null;
+                if (row.Tag != null)
+                    secret = (ParticipantHiddenData)row.Tag;
+                var passportInfo = (secret?.PassportInfo != null) ? secret?.PassportInfo : getPassportInfo();
+                var participant = new LotteryParticipant(name, surname, age, balance, passportInfo, greed);
+                if (secret?.Tickets != null)
+                {
+                    foreach (LotteryTicket ticket in secret.Tickets)
+                    {
+                        if (ticket == null) continue;
 
-                //if (File.Exists(fullpath))
-                //{
-                //    int count = Directory.GetFiles(path).Count(file => Path.GetFileName(file).StartsWith($"Participant_{name}_{surname}_{unixTimestampSeconds}", StringComparison.Ordinal));
-                //    fullpath = Path.Combine(path, $"Participant_{name}_{surname}_{unixTimestampSeconds}_{count}.json");
-                //}
+                        participant.AddTicket(ticket);
+                    }
+                }
 
                 var serializer = new LotteryArchiveJSONSerializer();
                 serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
-                serializer.SelectFile($"Participant_{participant.Initials}_{participant.GetPassportInfo("admin")}");
+                serializer.SelectFile($"Participant_{participant.FullName}_{participant.GetPassportInfo("admin")}");
                 serializer.SerializeLotteryParticipant(participant);
-
-                //File.WriteAllText(fullpath, jsonObj.ToString());
-                //rowIndex++; заменено на row.Index
             }
             if (showMsgBox)
             {
