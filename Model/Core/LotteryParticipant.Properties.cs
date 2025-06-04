@@ -12,6 +12,9 @@ namespace Model.Core
         public decimal Balance {  get;private set; }
         public int Greed { get; private set; }
 
+        private decimal _addonOnSpent;
+        private decimal _addonOnWin;
+
         public void AddBalance(decimal balance, LotteryEvent lottery)
         {
             if (lottery.WinnerParticipant == this)
@@ -21,9 +24,10 @@ namespace Model.Core
             }
         }
 
-        public void RefundMoney(LotteryEvent lottery)
+        public bool RefundMoney(LotteryEvent lottery)
         {
-            LotteryTicket[] newTickets = new LotteryTicket[0];
+            if (lottery.Refunded) return true;
+
             foreach (LotteryTicket ticket in _tickets)
             {
                 if (ticket == null) continue;
@@ -31,15 +35,10 @@ namespace Model.Core
                 {
                     Balance += (decimal)0.9 * ticket.Price;
                     this.Save();
-                } else
-                {
-                    Array.Resize(ref newTickets, newTickets.Length + 1);
-                    newTickets[^1] = ticket;
                 }
             }
 
-            if (newTickets.Length != 0)
-                _tickets = newTickets;
+            return true;
         }
 
     }

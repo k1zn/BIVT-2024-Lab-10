@@ -10,6 +10,11 @@ namespace Model.Core
 {
     public partial class LotteryEvent
     {
+        public bool Refunded
+        {
+            get; private set;
+        }
+
         public LotteryTicket GetWinner()
         {
             if (_isWinnerExist) return _winnerTicket;
@@ -52,6 +57,8 @@ namespace Model.Core
 
         private LotteryTicket CancelThisLottery()
         {
+            if (this.Refunded) return null;
+
             _isWinnerExist = true;
             var participant = new LotteryParticipant("-", "-", 0, 0, "-", 0);
             var ticket = new LotteryTicket(-1, 0, 0, this.EventName, participant);
@@ -62,7 +69,7 @@ namespace Model.Core
             foreach (LotteryParticipant p in this._lotteryParticipants)
             {
                 if (p == null) continue;
-                p.RefundMoney(this);
+                this.Refunded = p.RefundMoney(this);
             }
 
             return ticket;
