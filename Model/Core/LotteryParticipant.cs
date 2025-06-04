@@ -47,7 +47,7 @@ namespace Model.Core
             get
             {
                 decimal ans = 0;
-                foreach (LotteryTicket ticket in Tickets)
+                foreach (LotteryTicket ticket in this.FilterTickets(ticket => ticket.WinTicket))
                 {
                     if (ticket == null) continue;
                     if (ticket.WinTicket) ans += ticket.LotteryPrizeFund;
@@ -98,6 +98,26 @@ namespace Model.Core
             serializer.SelectFile($"Participant_{this.FullName}_{this.GetPassportInfo("admin")}");
 
             serializer.SerializeLotteryParticipant(this);
+        }
+
+        public delegate bool TicketFilter(LotteryTicket ticket);
+
+        public LotteryTicket[] FilterTickets(TicketFilter filter)
+        {
+            if (filter == null) return this.Tickets;
+            return this.Tickets.Where(t => filter(t)).ToArray();
+        }
+
+        public static bool operator ==(LotteryParticipant a, LotteryParticipant b)
+        {
+            if (ReferenceEquals(a, b)) return true;
+            if (a is null || b is null) return false;
+            return a.UserID == b.UserID;
+        }
+
+        public static bool operator !=(LotteryParticipant a, LotteryParticipant b)
+        {
+            return !(a == b);
         }
 
     }
