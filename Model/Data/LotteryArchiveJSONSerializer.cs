@@ -25,9 +25,9 @@ namespace Model.Data
             return TimeZoneInfo.ConvertTimeFromUtc(dateTime, russiaTimeZone);
         }
 
-        public override string SerializeLottery(LotteryEvent e)
+        public override void SerializeLottery(LotteryEvent e)
         {
-            if (e == null || string.IsNullOrWhiteSpace(FilePath)) return "";
+            if (e == null || string.IsNullOrWhiteSpace(FilePath)) return;
 
             var winnerTicket = e.GetWinner();
 
@@ -52,15 +52,12 @@ namespace Model.Data
             jsonObj["TicketID"] = winnerTicketID;
             jsonObj["Timestamp"] = getRussiaDateTime(unixTimestampSeconds);
 
-            string fullPath = FilePath; // SelectFolder + SelectFile
-            File.WriteAllText(fullPath, jsonObj.ToString());
-
-            return fullPath;
+            File.WriteAllText(this.FilePath, jsonObj.ToString());
         }
 
-        public override string SerializeLotteryParticipant(LotteryParticipant participant)
+        public override void SerializeLotteryParticipant(LotteryParticipant participant)
         {
-            if (participant == null || string.IsNullOrWhiteSpace(FilePath)) return "";
+            if (participant == null || string.IsNullOrWhiteSpace(FilePath)) return;
 
             var jsonObj = JObject.FromObject(participant);
             jsonObj["Tickets"] = SerializeLotteryTicket<LotteryTicket[], JArray>(participant.Tickets);
@@ -68,10 +65,7 @@ namespace Model.Data
 
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            string fullPath = FilePath; // SelectFolder + SelectFile
-            File.WriteAllText(fullPath, jsonObj.ToString());
-
-            return fullPath;
+            File.WriteAllText(this.FilePath, jsonObj.ToString());
         }
 
         public override T2 SerializeLotteryTicket<T1, T2>(T1 tickets)
@@ -104,7 +98,7 @@ namespace Model.Data
         }
 
 
-        public override LotteryEvent DeserializeLottery(string fileName)
+        public override LotteryEvent DeserializeLottery()
         {
             if (string.IsNullOrWhiteSpace(FilePath)) return null;
 
@@ -175,16 +169,16 @@ namespace Model.Data
 
             if (jsonObj == null) return null;
 
-            var FullName = Convert.ToString(jsonObj["FullName"]);
-            var FullNameSplit = FullName.Split(" ");
+            var Name = Convert.ToString(jsonObj["Name"]);
+            var Surname = Convert.ToString(jsonObj["Surname"]);
             var age = Convert.ToInt32(jsonObj["Age"]);
             var balance = Convert.ToInt32(jsonObj["Balance"]);
             var greed = Convert.ToInt32(jsonObj["Greed"]);
             var passportInfo = Convert.ToString(jsonObj["PassportInfo"]);
 
             var participant = new LotteryParticipant(
-                FullNameSplit[0],
-                FullNameSplit.Length > 1 ? FullNameSplit[1] : "",
+                Name,
+                Surname,
                 age,
                 balance,
                 passportInfo,
@@ -224,8 +218,11 @@ namespace Model.Data
             var ticketLen = Convert.ToInt32(jsonObj["TicketLen"]);
             var price = Convert.ToDecimal(jsonObj["Price"]);
             var lotteryName = Convert.ToString(jsonObj["LotteryName"]);
-
-            return new LotteryTicket(ticketId, ticketLen, price, lotteryName, participant);
+            var winTicket = Convert.ToBoolean(jsonObj["WinTicket"]);
+            var lotteryPrizeFund = Convert.ToInt32(jsonObj["LotteryPrizeFund"]);
+            var ticket = new LotteryTicket(ticketId, ticketLen, price, lotteryName, participant, lotteryPrizeFund);
+            ticket.SetWinStatus(winTicket);
+            return ticket;
         }
     }
 }

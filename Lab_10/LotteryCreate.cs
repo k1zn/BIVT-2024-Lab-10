@@ -97,7 +97,16 @@ namespace Lab_10
             string fullName = participant.FullName;
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            var serializer = new LotteryArchiveJSONSerializer();
+            LotteryArchiveSerializer serializer;
+
+            if (MyForm.SerializerType == "json")
+            {
+                serializer = new LotteryArchiveJSONSerializer();
+            } else
+            {
+                serializer = new LotteryArchiveXMLSerializer();
+            }
+
             serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Lotteries"));
             serializer.SelectFile($"{Lottery.EventName}_{unixTimestampSeconds}");
 

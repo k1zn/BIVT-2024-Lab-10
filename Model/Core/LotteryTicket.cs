@@ -23,6 +23,11 @@ namespace Model.Core
             }
         }
 
+        public int LotteryPrizeFund
+        {
+            get; private set;
+        }
+
         public string LotteryName
         {
             get; private set;
@@ -49,16 +54,15 @@ namespace Model.Core
             }
         }
 
-        public void SetWinStatus(LotteryEvent lottery)
+        public void SetWinStatus(bool isWinner)
         {
-            if (this == lottery.WinnerTicket)
-            {
-                WinTicket = true;
-            }
+            WinTicket = isWinner;
         }
 
         public LotteryTicket(LotteryEvent lottery, LotteryParticipant participant)
         {
+            LotteryPrizeFund = lottery.PrizeFund;
+
             _ticketId = lottery.GetFutureTicketID();
             _ticketLen = lottery.NumberOfTickets.ToString().Length;
             _participant = participant;
@@ -67,8 +71,10 @@ namespace Model.Core
             LotteryName = lottery.EventName;
         }
 
-        public LotteryTicket(int ticketId, int ticketLen, decimal price, string lotteryName, LotteryParticipant participant)
+        public LotteryTicket(int ticketId, int ticketLen, decimal price, string lotteryName, LotteryParticipant participant, int prizeFund)
         {
+            LotteryPrizeFund = prizeFund;
+
             _ticketId = ticketId;
             _ticketLen = ticketLen;
             _participant = participant;

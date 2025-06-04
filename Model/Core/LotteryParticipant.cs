@@ -50,7 +50,7 @@ namespace Model.Core
                 foreach (LotteryTicket ticket in Tickets)
                 {
                     if (ticket == null) continue;
-                    if (ticket.WinTicket) ans += ticket.Price;
+                    if (ticket.WinTicket) ans += ticket.LotteryPrizeFund;
                 }
                 ans += RefundedMoney;
                 return ans;
@@ -80,7 +80,20 @@ namespace Model.Core
 
         public void Save()
         {
-            var serializer = new LotteryArchiveJSONSerializer();
+            LotteryArchiveSerializer serializer;
+
+            var config = Path.Combine(Directory.GetCurrentDirectory(), "serializetype.txt");
+            if (!File.Exists(config)) File.WriteAllText(config, "json");
+
+            if (File.ReadAllText(config) == "json")
+            {
+                serializer = new LotteryArchiveJSONSerializer();
+            }
+            else
+            {
+                serializer = new LotteryArchiveXMLSerializer();
+            }
+
             serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
             serializer.SelectFile($"Participant_{this.FullName}_{this.GetPassportInfo("admin")}");
 

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Model.Core;
+using Model.Data;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -73,54 +75,62 @@ namespace Lab_10
         private void AddOneFileToTable(string filePath)
         {
             if (!File.Exists(filePath))
-            {
                 return;
-            }
 
-            var content = File.ReadAllText(filePath);
-
+            string content = File.ReadAllText(filePath);
             if (string.IsNullOrWhiteSpace(content))
             {
                 if (this.IsHandleCreated)
-                    ShowMsgBox($"Лотерея {Path.GetFileNameWithoutExtension(filePath)} не будет отображена - файл пуст", true);
+                    ShowMsgBox($"Лотерея {Path.GetFileNameWithoutExtension(filePath)} не будет отображена — файл пуст", true);
                 return;
             }
 
-            JObject jsonObj = null;
-            bool success = false;
+            LotteryArchiveSerializer serializer;
 
+            if (filePath.EndsWith(".json"))
+                serializer = new LotteryArchiveJSONSerializer();
+            else if (filePath.EndsWith(".xml"))
+                serializer = new LotteryArchiveXMLSerializer();
+            else
+                return;
+
+            serializer.SelectFolder(Path.GetDirectoryName(filePath));
+            serializer.SelectFile(Path.GetFileNameWithoutExtension(filePath));
+            
+            LotteryEvent lottery;
             try
             {
-                using (var jsonTextReader = new JsonTextReader(new StringReader(content)))
-                {
-                    jsonObj = JObject.Load(jsonTextReader);
-                    success = true;
-                }
-            } catch (Exception)
+                lottery = serializer.DeserializeLottery();
+            }
+            catch
             {
-                ShowMsgBox($"Лотерея {Path.GetFileNameWithoutExtension(filePath)} не будет отображена из-за ошибки чтения", true);
+                ShowMsgBox($"Лотерея {Path.GetFileNameWithoutExtension(filePath)} не будет отображена — ошибка при чтении", true);
+                return;
             }
 
-            if (!success || jsonObj == null) return;
+            if (lottery == null)
+                return;
 
             tableLayoutPanel1.RowCount++;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
-            var ticketID = jsonObj["TicketID"].ToString();
-            var winner = jsonObj["Winner"].ToString();
-            var timestamp = jsonObj["Timestamp"].ToString();
+            string ticketID = lottery.WinnerTicket?.TicketID ?? "-1";
+            string winner = lottery.WinnerParticipant?.FullName ?? "отсутствует";
+            string timestamp = (filePath.EndsWith(".json"))
+                ? JObject.Parse(content)["Timestamp"]?.ToString() ?? "-"
+                : File.GetLastWriteTime(filePath).ToString("yyyy-MM-dd HH:mm:ss");
+
             if (ticketID == "-1")
             {
                 winner = "отсутствует";
                 ticketID = "отменена";
                 timestamp = "-";
             }
-                
 
-            AddNewLabel(jsonObj["EventName"].ToString(), tableLayoutPanel1);
-            AddNewLabel(jsonObj["NumberOfParticipants"].ToString(), tableLayoutPanel1);
-            AddNewLabel(jsonObj["NumberOfTickets"].ToString(), tableLayoutPanel1);
-            AddNewLabel(jsonObj["PrizeFund"].ToString(), tableLayoutPanel1);
+            AddNewLabel(lottery.EventName, tableLayoutPanel1);
+            AddNewLabel(lottery.NumberOfParticipants.ToString(), tableLayoutPanel1);
+            AddNewLabel(lottery.NumberOfTickets.ToString(), tableLayoutPanel1);
+            AddNewLabel(lottery.PrizeFund.ToString(), tableLayoutPanel1);
             AddNewLabel(winner, tableLayoutPanel1);
             AddNewLabel(ticketID, tableLayoutPanel1);
             AddNewLabel(timestamp, tableLayoutPanel1);

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -24,11 +25,16 @@ namespace Lab_10
             public LotteryTicket[] Tickets { get { return _tickets; } }
 
             public string PassportInfo { get; private set; }
+            
+            public decimal MoneySpentOnTickets { get; private set; }
+            public decimal MoneyWinOnTickets { get; private set; }
 
-            public ParticipantHiddenData(LotteryTicket[] tickets, string passportInfo)
+            public ParticipantHiddenData(LotteryTicket[] tickets, string passportInfo, decimal moneySpentOnTickets, decimal moneyWinOnTickets)
             {
                 _tickets = tickets;
                 PassportInfo = passportInfo;
+                MoneySpentOnTickets = moneySpentOnTickets;
+                MoneyWinOnTickets = moneyWinOnTickets;
             }
         }
 
@@ -55,22 +61,47 @@ namespace Lab_10
             dataGridView1.RowsRemoved += DataGridView1_RowsChanged;
 
             dataGridView1.CellValueChanged += DataGridView1_CellValueChanged;
+            dataGridView1.CellClick += dataGridView1_CellClick;
 
             UpdateDataGridView();
 
         }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dataGridView1.Columns[e.ColumnIndex].Name == "ActionButton")
+            {
+                var row = dataGridView1.Rows[e.RowIndex];
+                if (row.Tag == null) return;
+
+                var secret = (ParticipantHiddenData)row.Tag;
+                var statForm = new ParticipantDiagram(secret.MoneySpentOnTickets, secret.MoneyWinOnTickets);
+                statForm.Show();
+            }
+        }
+
 
         private void UpdateDataGridView()
         {
             if (!(dataGridView1.Rows.Count == 0 || dataGridView1.Rows.Count == 1 && dataGridView1.Rows[0].IsNewRow))
                 dataGridView1.Rows.Clear();
 
-            var serializer = new LotteryArchiveJSONSerializer();
+            LotteryArchiveSerializer serializer;
+
+            if (MyForm.SerializerType == "json")
+            {
+                serializer = new LotteryArchiveJSONSerializer();
+            }
+            else
+            {
+                serializer = new LotteryArchiveXMLSerializer();
+            }
+
             serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
             foreach (var file in Directory.GetFiles(serializer.FolderPath))
             {
                 serializer.SelectFile(Path.GetFileNameWithoutExtension(file));
-                LotteryParticipant participant = serializer.DeserializeLotteryParticipant<object>();
+                LotteryParticipant participant = serializer.DeserializeLotteryParticipant<object>(default);
                 if (participant == null)
                 {
                     continue;
@@ -84,7 +115,7 @@ namespace Lab_10
                 row.Cells[3].Value = participant.Balance;
                 row.Cells[4].Value = participant.Greed;
 
-                row.Tag = new ParticipantHiddenData(participant.Tickets, participant.GetPassportInfo("admin"));
+                row.Tag = new ParticipantHiddenData(participant.Tickets, participant.GetPassportInfo("admin"), participant.MoneySpentOnTickets, participant.MoneyWinOnTickets);
 
                 dataGridView1.Rows.Add(row);
             }
@@ -115,7 +146,7 @@ namespace Lab_10
                 row.Cells[3].Value = balance;
                 row.Cells[4].Value = greed;
 
-                row.Tag = new ParticipantHiddenData(new LotteryTicket[0], getPassportInfo());
+                row.Tag = new ParticipantHiddenData(new LotteryTicket[0], getPassportInfo(), 0, 0);
 
                 dataGridView1.Rows.Add(row);
             }

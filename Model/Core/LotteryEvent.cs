@@ -117,7 +117,20 @@ namespace Model.Core
         {
             var rand = new Random();
 
-            var serializer = new LotteryArchiveJSONSerializer();
+            LotteryArchiveSerializer serializer;
+
+            var config = Path.Combine(Directory.GetCurrentDirectory(), "serializetype.txt");
+            if (!File.Exists(config)) File.WriteAllText(config, "json");
+
+            if (File.ReadAllText(config) == "json")
+            {
+                serializer = new LotteryArchiveJSONSerializer();
+            }
+            else
+            {
+                serializer = new LotteryArchiveXMLSerializer();
+            }
+
             serializer.SelectFolder(Path.Combine(Directory.GetCurrentDirectory(), "Participants"));
 
             var files = Directory.GetFiles(serializer.FolderPath);
@@ -129,7 +142,7 @@ namespace Model.Core
             foreach (var file in files)
             {
                 serializer.SelectFile(Path.GetFileNameWithoutExtension(file));
-                var participant = serializer.DeserializeLotteryParticipant<object>();
+                var participant = serializer.DeserializeLotteryParticipant<object>(null);
                 if (participant != null)
                 {
                     Array.Resize(ref _lotteryParticipants, _lotteryParticipants.Length + 1);

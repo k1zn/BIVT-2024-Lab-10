@@ -8,6 +8,12 @@ namespace Lab_10
 {
     public class MyForm : Form
     {
+
+        public static string SerializerType
+        {
+            get; protected set;
+        }
+
         protected static void ShowMsgBox(string text, bool isInfo)
         {
             MessageBox.Show(text, isInfo ? "Информация" : "Ошибка", MessageBoxButtons.OK, isInfo ? MessageBoxIcon.Information : MessageBoxIcon.Error);

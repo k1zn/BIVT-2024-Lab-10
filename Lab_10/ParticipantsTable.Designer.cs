@@ -58,6 +58,14 @@
             dataGridView1.Columns.Add("Age", "Возраст");
             dataGridView1.Columns.Add("Balance", "Баланс");
             dataGridView1.Columns.Add("Greed", "Жадность");
+
+            var buttonColumn = new DataGridViewButtonColumn();
+            buttonColumn.HeaderText = "Статистика";
+            buttonColumn.Text = "Открыть";
+            buttonColumn.Name = "ActionButton";
+            buttonColumn.UseColumnTextForButtonValue = true;
+
+            dataGridView1.Columns.Add(buttonColumn);
             // 
             // button1
             // 

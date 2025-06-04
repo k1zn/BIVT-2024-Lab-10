@@ -2,12 +2,12 @@
 using Model.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using System.Xml;
-using System.Net.Sockets;
+using System.Xml.Serialization;
 
 namespace Model.Data
 {
@@ -43,26 +43,30 @@ namespace Model.Data
 
         public class LotteryEventDTO
         {
-            public string lotteryName { get; set; }
-            public int numberOfParticipants { get; set; }
-            public int numberOfTickets { get; set; }
+            public int NumberOfTickets { get; set; }
+            public int NumberOfParticipants { get; set; }
             public int PrizeFund { get; set; }
-            public string Winner { get; set; }
+            public string EventName { get; set; }
             public decimal TicketPrice { get; set; }
-            public string ID { get; set; }
-            public DateTime TimeStamp { get; set; }
-
+            public string Winner { get; set; }
+            public string TicketID { get; set; }
+            public DateTime Timestamp { get; set; }
+            public TicketDTO WinnerTicket { get; set; }
+            public ParticipantDTO WinnerParticipant { get; set; }
+            public bool Refunded { get; set; }
         }
 
         public class ParticipantDTO
         {
-            public string FullName { get; set; }
-            public int Age { get; set; }
+            public List<TicketDTO> Tickets { get; set; }
             public decimal Balance { get; set; }
             public int Greed { get; set; }
+            public string FullName { get; set; }
+            public string Name { get; set; }
+            public string Surname { get; set; }
+            public int Age { get; set; }
+            public int UserID { get; set; }
             public string PassportInfo { get; set; }
-
-            public List<TicketDTO> Tickets { get; set; }
         }
 
         public class TicketDTO
@@ -71,178 +75,104 @@ namespace Model.Data
             public int TicketLen { get; set; }
             public decimal Price { get; set; }
             public string LotteryName { get; set; }
+            public bool WinTicket { get; set; }
+
+            public int LotteryPrizeFund { get; set; }
         }
 
-        public override LotteryEvent DeserializeLottery(string fileName)
+        public override void SerializeLottery(LotteryEvent e)
         {
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
-            string fullPath = Path.Combine(folderPath, fileName);
-            if (!File.Exists(fullPath)) return null;
-            XmlSerializer serializer = new XmlSerializer(typeof(LotteryEventDTO));
-            using (FileStream stream = new FileStream(fullPath, FileMode.Open))
-            {
-                var dto = (LotteryEventDTO)serializer.Deserialize(stream);
-                return new LotteryEvent
-                (
-                    dto.lotteryName,
-                    dto.numberOfTickets,
-                    dto.numberOfParticipants,
-                    dto.PrizeFund,
-                    dto.TicketPrice
-                   
-                );
-            }
-        }
-        public override LotteryParticipant DeserializeLotteryParticipant<T>(T obj)
-        {
-            if (obj is string fileName)
-            {
-                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
-                string fullPath = Path.Combine(folderPath, fileName);
-                if (!File.Exists(fullPath)) return null;
+            if (e == null) return;
 
-                try
-                {
-                    var dto = XMLDeserialize<ParticipantDTO>(fullPath);
-                    var participant = new LotteryParticipant(
-                        dto.FullName,
-                        dto.FullName,
-                        dto.Age,
-                        dto.Balance,
-                        dto.PassportInfo,
-                        dto.Greed
-                    );
-
-                    foreach (var ticketDto in dto.Tickets)
-                    {
-                        participant.AddTicket(new LotteryTicket(
-                            int.Parse(ticketDto.TicketID),
-                            ticketDto.TicketLen,
-                            ticketDto.Price,
-                            ticketDto.LotteryName,
-                            participant
-                        ));
-                    }
-                    return participant;
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-            throw new ArgumentException("некорректный тип");
-        }
-
-    
-
-    public override LotteryTicket DeserializeLotteryTicket(string jsonContent, LotteryParticipant participant)
-    {
-        if (string.IsNullOrEmpty(jsonContent)) return null;
-            try
-            {
-                var serializer = new XmlSerializer(typeof(TicketDTO));
-                using (var reader = new StringReader(jsonContent))
-                {
-                    var dto = (TicketDTO)serializer.Deserialize(reader);
-                    var ticket = new LotteryTicket(
-                        int.Parse(dto.TicketID),
-                        dto.TicketLen,
-                        dto.Price,
-                        dto.LotteryName,
-                        participant
-                    );
-
-                    participant?.AddTicket(ticket);
-                    return ticket;
-                }
-            }
-            catch
-            {
-                return null;
-            }
-            throw new NotImplementedException();
-    }
-
-        public override string SerializeLottery(LotteryEvent e)
-        {
-            if (e == null) return "";
             var winnerTicket = e.WinnerTicket;
-            string FullName;
-            string winnerTicketID;
-
-            if (winnerTicket == null)
-            {
-                FullName = "-";
-                winnerTicketID = "-";
-
-            }
-            else
-            {
-                FullName = winnerTicket.Participant.FullName;
-                winnerTicketID = winnerTicket.TicketID;
-            }
+            string fullName = winnerTicket?.Participant.FullName ?? "-";
+            string winnerTicketID = winnerTicket?.TicketID ?? "-";
             long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+            TicketDTO winnerTicketDTO = null;
+            ParticipantDTO winnerParticipantDTO = null;
+
+            if (winnerTicket != null)
+            {
+                winnerTicketDTO = new TicketDTO
+                {
+                    TicketID = winnerTicket.TicketID,
+                    TicketLen = winnerTicket.TicketLen,
+                    Price = winnerTicket.Price,
+                    LotteryName = winnerTicket.LotteryName,
+                    WinTicket = true,
+                    LotteryPrizeFund = e.PrizeFund
+                };
+
+                var p = winnerTicket.Participant;
+                winnerParticipantDTO = new ParticipantDTO
+                {
+                    Balance = p.Balance,
+                    Greed = p.Greed,
+                    FullName = p.FullName,
+                    Name = p.Name,
+                    Surname = p.Surname,
+                    Age = p.Age,
+                    UserID = p.UserID,
+                    PassportInfo = p.GetPassportInfo("admin"),
+                    Tickets = p.Tickets.Select(t => new TicketDTO
+                    {
+                        TicketID = t.TicketID,
+                        TicketLen = t.TicketLen,
+                        Price = t.Price,
+                        LotteryName = t.LotteryName,
+                        WinTicket = (t == winnerTicket),
+                        LotteryPrizeFund = e.PrizeFund
+                    }).ToList()
+                };
+            }
 
             var dto = new LotteryEventDTO
             {
-                lotteryName = e.EventName,
-                numberOfParticipants = e.NumberOfParticipants,
-                numberOfTickets = e.NumberOfTickets,
+                NumberOfTickets = e.NumberOfTickets,
+                NumberOfParticipants = e.NumberOfParticipants,
                 PrizeFund = e.PrizeFund,
-                Winner = FullName,
-                ID = winnerTicketID,
+                EventName = e.EventName,
                 TicketPrice = e.TicketPrice,
-                TimeStamp = getRussiaDateTime(unixTimestampSeconds)
+                Winner = fullName,
+                TicketID = winnerTicketID,
+                Timestamp = getRussiaDateTime(unixTimestampSeconds),
+                WinnerTicket = winnerTicketDTO,
+                WinnerParticipant = winnerParticipantDTO,
+                Refunded = false
             };
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
 
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-            string fullPath = Path.Combine(folderPath, $"{e.EventName}_{unixTimestampSeconds}.xml");
-
-            XMLSerializer(dto, fullPath);
-            return fullPath;
+            XMLSerializer(dto, this.FilePath);
         }
 
-        public override string SerializeLotteryParticipant(LotteryParticipant participant)
+        public override void SerializeLotteryParticipant(LotteryParticipant participant)
         {
-            if (participant == null) return "";
+            if (participant == null) return;
+
             var dto = new ParticipantDTO
             {
-                FullName = participant.FullName,
-                Age = participant.Age,
                 Balance = participant.Balance,
                 Greed = participant.Greed,
+                FullName = participant.FullName,
+                Name = participant.Name,
+                Surname = participant.Surname,
+                Age = participant.Age,
+                UserID = participant.UserID,
                 PassportInfo = participant.GetPassportInfo("admin"),
-                Tickets = new List<TicketDTO>()
+                Tickets = participant.Tickets.Select(t => new TicketDTO
+                {
+                    TicketID = t.TicketID,
+                    TicketLen = t.TicketLen,
+                    Price = t.Price,
+                    LotteryName = t.LotteryName,
+                    WinTicket = t.WinTicket,
+                    LotteryPrizeFund = t.LotteryPrizeFund,
+                }).ToList()
             };
 
-
-            foreach (var ticket in participant.Tickets)
-            {
-                dto.Tickets.Add(new TicketDTO
-                {
-                    TicketID = ticket.TicketID,
-                    TicketLen = ticket.TicketLen,
-                    Price = ticket.Price,
-                    LotteryName = ticket.LotteryName
-                });
-            }
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
-
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-            string fullPath = Path.Combine(folderPath, $"Participant_{participant.FullName}_{unixTimestampSeconds}.xml");
-
-            XMLSerializer(dto, fullPath);
-            return fullPath;
+            XMLSerializer(dto, this.FilePath);
         }
+
         public override T2 SerializeLotteryTicket<T1, T2>(T1 ticket_s)
         {
             if (ticket_s == null || !(ticket_s is LotteryTicket lotteryTicket))
@@ -253,28 +183,126 @@ namespace Model.Data
                 TicketID = lotteryTicket.TicketID,
                 TicketLen = lotteryTicket.TicketLen,
                 Price = lotteryTicket.Price,
-                LotteryName = lotteryTicket.LotteryName
+                LotteryName = lotteryTicket.LotteryName,
+                WinTicket = lotteryTicket.WinTicket,
+                LotteryPrizeFund = lotteryTicket.LotteryPrizeFund
             };
 
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XML");
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-            long unixTimestampSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            string fullPath = Path.Combine(folderPath, $"Ticket_{lotteryTicket.TicketID}_{unixTimestampSeconds}.xml");
-            XMLSerializer(dto, fullPath);
+            XMLSerializer(dto, this.FilePath);
             if (typeof(T2) == typeof(string))
             {
-                return (T2)(object)fullPath;
+                return (T2)(object)this.FilePath;
             }
 
             return default;
-
         }
 
+        public override LotteryEvent DeserializeLottery()
+        {
+            var dto = XMLDeserialize<LotteryEventDTO>(this.FilePath);
+            LotteryParticipant winner = null;
+            LotteryEvent lottery = null;
 
+            if (dto.WinnerParticipant != null)
+            {
+                winner = new LotteryParticipant(
+                    dto.WinnerParticipant.Name,
+                    dto.WinnerParticipant.Surname,
+                    dto.WinnerParticipant.Age,
+                    dto.WinnerParticipant.Balance,
+                    dto.WinnerParticipant.PassportInfo,
+                    dto.WinnerParticipant.Greed
+                );
+
+                foreach (var ticketDto in dto.WinnerParticipant.Tickets)
+                {
+                    var ticket = new LotteryTicket(
+                        int.Parse(ticketDto.TicketID),
+                        ticketDto.TicketLen,
+                        ticketDto.Price,
+                        ticketDto.LotteryName,
+                        winner,
+                        ticketDto.LotteryPrizeFund
+                    );
+                    winner.AddTicket(ticket);
+                }
+            }
+
+            lottery = new LotteryEvent(
+                dto.EventName,
+                dto.NumberOfTickets,
+                dto.NumberOfParticipants,
+                dto.PrizeFund,
+                dto.TicketPrice,
+                winner
+            );
+
+            return lottery;
+        }
+
+        public override LotteryParticipant DeserializeLotteryParticipant<T>(T obj)
+        {
+            try
+            {
+                var dto = XMLDeserialize<ParticipantDTO>(this.FilePath);
+                var participant = new LotteryParticipant(
+                    dto.Name,
+                    dto.Surname,
+                    dto.Age,
+                    dto.Balance,
+                    dto.PassportInfo,
+                    dto.Greed
+                );
+
+                foreach (var ticketDto in dto.Tickets)
+                {
+                    var ticket = new LotteryTicket(
+                        int.Parse(ticketDto.TicketID),
+                        ticketDto.TicketLen,
+                        ticketDto.Price,
+                        ticketDto.LotteryName,
+                        participant,
+                        ticketDto.LotteryPrizeFund
+                    );
+                    ticket.SetWinStatus(ticketDto.WinTicket);
+                    participant.AddTicket(ticket);
+                }
+                return participant;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public override LotteryTicket DeserializeLotteryTicket(string content, LotteryParticipant participant)
+        {
+            if (string.IsNullOrEmpty(content)) return null;
+            try
+            {
+                var serializer = new XmlSerializer(typeof(TicketDTO));
+                using (var reader = new StringReader(content))
+                {
+                    var dto = (TicketDTO)serializer.Deserialize(reader);
+                    var ticket = new LotteryTicket(
+                        int.Parse(dto.TicketID),
+                        dto.TicketLen,
+                        dto.Price,
+                        dto.LotteryName,
+                        participant,
+                        dto.LotteryPrizeFund
+                    );
+
+                    ticket.SetWinStatus(dto.WinTicket);
+
+                    participant?.AddTicket(ticket);
+                    return ticket;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
-
-        
 }

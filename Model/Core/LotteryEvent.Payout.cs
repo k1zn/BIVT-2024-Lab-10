@@ -43,7 +43,7 @@ namespace Model.Core
                     throw new Exception($"Error! {_tickets.Length} {i}");
                 }
                 _winnerTicket = winner;
-                _winnerTicket.SetWinStatus(this);
+                _winnerTicket.SetWinStatus(true);
 
                 winnerParticipant = winner.Participant;
                 _winnerParticipant = winnerParticipant;
@@ -61,7 +61,7 @@ namespace Model.Core
 
             _isWinnerExist = true;
             var participant = new LotteryParticipant("-", "-", 0, 0, "-", 0);
-            var ticket = new LotteryTicket(-1, 0, 0, this.EventName, participant);
+            var ticket = new LotteryTicket(-1, 0, 0, this.EventName, participant, 0);
             participant.AddTicket(ticket);
             _winnerTicket = ticket;
             _winnerParticipant = participant;
