@@ -31,6 +31,7 @@ namespace Lab_10
         private void button1_Click(object sender, EventArgs e)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Participants");
+            string lotteriesPath = Path.Combine(Directory.GetCurrentDirectory(), "Lotteries");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -39,6 +40,12 @@ namespace Lab_10
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 ShowMsgBox("Укажите название лотереи", false);
+                textBox1.Focus();
+                return;
+            }
+            if (Directory.GetFiles(lotteriesPath).Any(l => Path.GetFileName(l).StartsWith($"{textBox1.Text}_")))
+            {
+                ShowMsgBox("Лотерея с таким названием уже была проведена", false);
                 textBox1.Focus();
                 return;
             }
@@ -115,13 +122,6 @@ namespace Lab_10
             LotteryCreated?.Invoke(this, new MyForm.LotteryPathEventArgs { LotteryPath = serializer.FilePath });
 
             MessageBox.Show($"Победитель: {fullName}{Environment.NewLine}ID выигрышного билета: {id}", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-        private DateTime getRussiaDateTime(long unixTimestampSeconds)
-        {
-            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTimestampSeconds);
-            DateTime dateTime = dateTimeOffset.DateTime;
-            TimeZoneInfo russiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Moscow");
-            return TimeZoneInfo.ConvertTimeFromUtc(dateTime, russiaTimeZone);
         }
     }
 }

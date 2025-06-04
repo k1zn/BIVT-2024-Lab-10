@@ -82,7 +82,7 @@ namespace Model.Data
 
         public override void SerializeLottery(LotteryEvent e)
         {
-            if (e == null) return;
+            if (e == null || string.IsNullOrWhiteSpace(this.FilePath)) return;
 
             var winnerTicket = e.WinnerTicket;
             string fullName = winnerTicket?.Participant.FullName ?? "-";
@@ -147,7 +147,7 @@ namespace Model.Data
 
         public override void SerializeLotteryParticipant(LotteryParticipant participant)
         {
-            if (participant == null) return;
+            if (participant == null || string.IsNullOrWhiteSpace(this.FilePath)) return;
 
             var dto = new ParticipantDTO
             {
@@ -175,7 +175,7 @@ namespace Model.Data
 
         public override T2 SerializeLotteryTicket<T1, T2>(T1 ticket_s)
         {
-            if (ticket_s == null || !(ticket_s is LotteryTicket lotteryTicket))
+            if (ticket_s == null || !(ticket_s is LotteryTicket lotteryTicket) || string.IsNullOrWhiteSpace(this.FilePath))
                 return default(T2);
 
             var dto = new TicketDTO
@@ -199,6 +199,8 @@ namespace Model.Data
 
         public override LotteryEvent DeserializeLottery()
         {
+            if (string.IsNullOrWhiteSpace(this.FilePath)) return null;
+
             var dto = XMLDeserialize<LotteryEventDTO>(this.FilePath);
             LotteryParticipant winner = null;
             LotteryEvent lottery = null;
@@ -242,6 +244,7 @@ namespace Model.Data
 
         public override LotteryParticipant DeserializeLotteryParticipant<T>(T obj)
         {
+            if (string.IsNullOrWhiteSpace(this.FilePath)) return null;
             try
             {
                 var dto = XMLDeserialize<ParticipantDTO>(this.FilePath);

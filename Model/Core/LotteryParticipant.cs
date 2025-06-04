@@ -120,5 +120,18 @@ namespace Model.Core
             return !(a == b);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is LotteryParticipant other)
+            {
+                return this == other;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.GetPassportInfo("admin").GetHashCode();
+        }
     }
 }
