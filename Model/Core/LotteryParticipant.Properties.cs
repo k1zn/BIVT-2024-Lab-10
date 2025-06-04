@@ -12,8 +12,7 @@ namespace Model.Core
         public decimal Balance {  get;private set; }
         public int Greed { get; private set; }
 
-        private decimal _addonOnSpent;
-        private decimal _addonOnWin;
+        public decimal RefundedMoney { get; private set; }
 
         public void AddBalance(decimal balance, LotteryEvent lottery)
         {
@@ -33,7 +32,9 @@ namespace Model.Core
                 if (ticket == null) continue;
                 if (ticket.LotteryName == lottery.EventName)
                 {
-                    Balance += (decimal)0.9 * ticket.Price;
+                    decimal refund = (decimal)0.9 * ticket.Price;
+                    Balance += refund;
+                    RefundedMoney += refund;
                     this.Save();
                 }
             }

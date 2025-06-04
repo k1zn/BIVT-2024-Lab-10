@@ -52,6 +52,7 @@ namespace Model.Core
                     if (ticket == null) continue;
                     if (ticket.WinTicket) ans += ticket.Price;
                 }
+                ans += RefundedMoney;
                 return ans;
             }
         }
